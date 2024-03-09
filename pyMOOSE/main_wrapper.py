@@ -45,6 +45,19 @@ def main():
     specific_times = [50.0, 100.0, 150.0]
     var_names = ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']
 
+    # Default specific times and variable names
+    #default_specific_times = "50.0, 100.0, 150.0"
+    #default_var_names = "disp, eta, pot, w, sigma11_aux, sigma22_aux"
+
+    # Ask the user for custom specific times or use the default
+    #specific_times_input = input(f"Enter specific times separated by commas [{default_specific_times}] (press enter to use default): ").strip()
+    #specific_times = [float(time.strip()) for time in specific_times_input.split(",")] if specific_times_input else [float(time.strip()) for time in default_specific_times.split(",")]
+
+    # Ask the user for custom variable names or use the default
+    #var_names_input = input(f"Enter variable names separated by commas [{default_var_names}] (press enter to use default): ").strip()
+    #var_names = [name.strip() for name in var_names_input.split(",")] if var_names_input else [name.strip() for name in default_var_names.split(",")]
+
+
     # Executing all functions in sequence
     print("Executing all operations...")
     find_and_process_files(base_directory, specific_times=specific_times)
