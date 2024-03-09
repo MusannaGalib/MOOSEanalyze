@@ -1,6 +1,5 @@
 #!/usr/bin/env pvpython
 import os
-import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -401,31 +400,14 @@ def plot_variables_over_line_combined_with_contour(base_directory, specific_time
 
 
 if __name__ == "__main__":
-    # Get the directory of the currently executing script and then move up one level
-    parent_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    # Point both variables to the "Data" folder inside the parent directory
-    script_directory = os.path.join(parent_directory, "Data")
-    base_directory = os.path.join(parent_directory, "Data")
-    #script_directory = os.path.dirname(os.path.realpath(__file__))
-    #base_directory = os.path.dirname(os.path.realpath(__file__))
-
-
-    # Ask the user if they want to use a different directory than the default "Data"
-    user_input = input(f"Press Enter to use the default directory or enter a new path: ").strip()
-    if user_input:
-        script_directory = user_input
-        base_directory = user_input
-        print(f"Using user-specified directory: {user_input}")
-
-     
-    
+    script_directory = os.path.dirname(os.path.realpath(__file__))
     # Define specific times of interest
     specific_times = [50.0, 100.0, 150.0]  # Adjust to match exact times in your dataset
     find_and_process_files(script_directory, specific_times=specific_times)
     plot_variables_across_timesteps(script_directory)
 
     var_names = ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']  # Define the variable names to plot
-
+    base_directory = os.path.dirname(os.path.realpath(__file__))
     plot_variables_over_line_combined(base_directory, specific_times, var_names)
     plot_variables_over_line_each_timestep_separately(base_directory, specific_times, var_names)
     generate_and_save_contours(base_directory, specific_times)

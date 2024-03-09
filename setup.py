@@ -5,12 +5,13 @@ setup(
     version='0.1',
     packages=find_packages(),
     install_requires=[
-        'pandas',
-        'matplotlib',
-        'numpy',
+        'pandas>=1.1.5',
+        'matplotlib>=3.3.3',
+        'numpy>=1.19.4',
         # 'vtk' # Uncomment this if vtk is available through pip
         # 'paraview' # Uncomment this if paraview is available through pip
     ],
+    python_requires='>=3.6',
     entry_points={
         'console_scripts': [
             'your_script=your_package.module:function',
@@ -22,5 +23,7 @@ setup(
     description="'A Python package for post-processing MOOSE data",
     license="MIT",
     keywords="MOOSE post-processing using Pvpython-paraview",
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     url="http://example.com/HelloWorld/",   # project home page, if any
 )

@@ -1,48 +1,61 @@
 import os
 import sys
 
+
+
+#sys.path.append('D:\\Backup_31_July_2022\\Research\\Research\\pyMOOSE')
+
+
+
+# Assuming main_wrapper.py is in the pyMOOSE\pyMOOSE directory
+# and you want to import modules from pyMOOSE (one level up)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+# Now try to import your modules
+try:
+    from pyMOOSE import (find_and_process_files,
+                         plot_variables_across_timesteps,
+                         plot_variables_over_line_combined,
+                         plot_variables_over_line_each_timestep_separately,
+                         generate_and_save_contours,
+                         plot_contours_from_csv,
+                         plot_variables_over_line_combined_with_contour,)
+except ModuleNotFoundError:
+    print("Failed to import pyMOOSE. Ensure the package is correctly placed within the project.")
+    sys.exit(1)
+
+
+    
+
+
 def main():
-    # Path configuration
-    script_directory = os.path.dirname(os.path.realpath(__file__))
-    base_directory = script_directory  # Assuming the data is processed in the script's directory
+    # Initial path configuration
+    parent_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    default_base_directory = os.path.join(parent_directory, "Data")
 
-    # Functions mapping
-    operations = {
-        "1": {
-            "title": "Generate and Save Contours",
-            "function": "generate_and_save_contours",
-            "args": [base_directory, [50.0, 100.0, 150.0]]
-        },
-        "2": {
-            "title": "Plot Variables Across Timesteps",
-            "function": "plot_variables_across_timesteps",
-            "args": [base_directory]
-        },
-        "3": {
-            "title": "Plot Variables Over Line Combined",
-            "function": "plot_variables_over_line_combined",
-            "args": [base_directory, [50.0, 100.0, 150.0], ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']]
-        },
-        # Add other operations here following the same structure
-    }
+    # Ask the user for a directory path or use the default
+    user_input = input(f"Press Enter to use the default directory ({default_base_directory}) or enter a new path: ").strip()
+    base_directory = user_input if user_input else default_base_directory
+    print(f"Using directory: {base_directory}")
 
-    while True:
-        print("\nSelect the operation you want to perform:")
-        for key, operation in operations.items():
-            print(f"{key}. {operation['title']}")
-        print("0. Exit")
 
-        choice = input("\nEnter your choice: ")
-        if choice == "0":
-            print("Exiting the program.")
-            break
+    # Specific times and variables might need to be adjusted based on your requirements
+    specific_times = [50.0, 100.0, 150.0]
+    var_names = ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']
 
-        operation = operations.get(choice)
-        if operation:
-            # Dynamically call the function based on the user's choice
-            globals()[operation['function']](*operation['args'])
-        else:
-            print("Invalid choice. Please try again.")
+    # Executing all functions in sequence
+    print("Executing all operations...")
+    find_and_process_files(base_directory, specific_times=specific_times)
+    plot_variables_across_timesteps(base_directory)
+    plot_variables_over_line_combined(base_directory, specific_times, var_names)
+    plot_variables_over_line_each_timestep_separately(base_directory, specific_times, var_names)
+    generate_and_save_contours(base_directory, specific_times)
+    plot_contours_from_csv(base_directory)
+    plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
+
+    print("All operations completed successfully.")
 
 if __name__ == "__main__":
     main()
