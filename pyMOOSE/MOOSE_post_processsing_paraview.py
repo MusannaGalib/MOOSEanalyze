@@ -406,18 +406,12 @@ if __name__ == "__main__":
     # Point both variables to the "Data" folder inside the parent directory
     script_directory = os.path.join(parent_directory, "Data")
     base_directory = os.path.join(parent_directory, "Data")
+
+    # Get the directory of the currently executing script and run on the folders available there
     #script_directory = os.path.dirname(os.path.realpath(__file__))
     #base_directory = os.path.dirname(os.path.realpath(__file__))
 
-
-    # Ask the user if they want to use a different directory than the default "Data"
-    #user_input = input(f"Press Enter to use the default directory or enter a new path: ").strip()
-   # if user_input:
-      #  script_directory = user_input
-      #  base_directory = user_input
-      #  print(f"Using user-specified directory: {user_input}")
-
-     
+  
     
     # Define specific times of interest
     specific_times = [50.0, 100.0, 150.0]  # Adjust to match exact times in your dataset
