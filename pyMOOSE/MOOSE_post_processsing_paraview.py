@@ -407,7 +407,7 @@ if __name__ == "__main__":
     script_directory = os.path.join(parent_directory, "Data")
     base_directory = os.path.join(parent_directory, "Data")
 
-    # Get the directory of the currently executing script and run on the folders available there
+    # Get the directory of the currently executing script and run on the folders availabe in the script folder
     #script_directory = os.path.dirname(os.path.realpath(__file__))
     #base_directory = os.path.dirname(os.path.realpath(__file__))
 
