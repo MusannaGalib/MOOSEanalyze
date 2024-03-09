@@ -411,11 +411,11 @@ if __name__ == "__main__":
 
 
     # Ask the user if they want to use a different directory than the default "Data"
-    user_input = input(f"Press Enter to use the default directory or enter a new path: ").strip()
-    if user_input:
-        script_directory = user_input
-        base_directory = user_input
-        print(f"Using user-specified directory: {user_input}")
+    #user_input = input(f"Press Enter to use the default directory or enter a new path: ").strip()
+   # if user_input:
+      #  script_directory = user_input
+      #  base_directory = user_input
+      #  print(f"Using user-specified directory: {user_input}")
 
      
     

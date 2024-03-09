@@ -36,7 +36,7 @@ def main():
     default_base_directory = os.path.join(parent_directory, "Data")
 
     # Ask the user for a directory path or use the default
-    user_input = input(f"Press Enter to use the default directory ({default_base_directory}) or enter a new path: ").strip()
+    user_input = input(f"Press Input to use the default directory ({default_base_directory}) or enter a new path: ").strip()
     base_directory = user_input if user_input else default_base_directory
     print(f"Using directory: {base_directory}")
 
