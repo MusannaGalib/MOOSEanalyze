@@ -34,6 +34,8 @@ Run  in command line -----> ./PvPython path/to/main_wrapper.py
 or
 Run  in command line -----> ./PvPython path/to/MOOSE_post_processsing_paraview.py (This will run in the Default Data Folder)
 ```
+## Authors
+This Software is developed by Musanna Galib
 
 
 ## Citing This Work
