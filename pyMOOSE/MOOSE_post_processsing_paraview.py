@@ -401,7 +401,27 @@ def plot_variables_over_line_combined_with_contour(base_directory, specific_time
 
 
 
-def compare_folders_at_time(base_directory, folder_names, time_value, var_names):
+def auto_detect_folders(base_directory):
+    """Automatically detect and return a list of folders within the given base directory."""
+    return [d for d in os.listdir(base_directory) if os.path.isdir(os.path.join(base_directory, d))]
+
+def compare_folders_at_time(base_directory, specific_times, var_names, folder_names=None):
+    # If folder_names is not provided or is an empty list, auto-detect all folders in the base directory
+    if not folder_names:
+        folder_names = auto_detect_folders(base_directory)
+    
+    # Process each folder
+    for folder_name in folder_names:
+        folder_path = os.path.join(base_directory, folder_name)
+        # Verify that the folder exists
+        if not os.path.exists(folder_path):
+            print(f"Folder does not exist: {folder_path}")
+            continue
+        print(f"Processing folder: {folder_name}")
+        
+        for time_value in specific_times:
+            print(f"Comparing at {time_value} seconds...")
+
     # Initialize the figure with one additional subplot for the contour
     total_plots = len(var_names) + len(folder_names)  # One plot for each variable per folder + contour per folder
     cols = 3  # Adjust the number of columns as needed
@@ -484,6 +504,10 @@ if __name__ == "__main__":
     plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
 
 
-    folder_names = ['Bare_Zn', 'Trial_RS_4_1_no_RS_anisotropy_0.005_1']
+    # Specify folder names to process only those folders
+    folder_names = ['Bare_Zn','MLD_Alucone_eigen_0.5']
     for specific_time in specific_times:
-        compare_folders_at_time(base_directory, folder_names, specific_time, var_names)
+        compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
+
+    # Or, call without specifying folder_names to auto-detect and process all folders
+    # compare_folders_at_time(base_directory, specific_times, var_names)
