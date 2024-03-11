@@ -73,6 +73,9 @@ def main():
     for specific_time in specific_times:
         compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
 
+    # Or, call without specifying folder_names to auto-detect and process all folders
+    #compare_folders_at_time(base_directory, specific_times, var_names)    
+
     print("All operations completed successfully.")
 
 if __name__ == "__main__":
