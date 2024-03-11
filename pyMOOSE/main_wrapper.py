@@ -71,7 +71,7 @@ def main():
 
     folder_names = ['Bare_Zn', 'Trial_RS_4_1_no_RS_anisotropy_0.005_1']
     for specific_time in specific_times:
-        compare_folders_at_time(base_directory, folder_names, specific_time, var_names)
+        compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
 
     print("All operations completed successfully.")
 

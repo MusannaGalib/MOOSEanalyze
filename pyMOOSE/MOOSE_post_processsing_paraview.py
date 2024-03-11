@@ -407,7 +407,7 @@ def auto_detect_folders(base_directory):
 
 def compare_folders_at_time(base_directory, specific_times, var_names, folder_names=None):
     # If folder_names is not provided or is an empty list, auto-detect all folders in the base directory
-    if not folder_names:
+    if folder_names is None:
         folder_names = auto_detect_folders(base_directory)
     
     # Process each folder
@@ -415,7 +415,7 @@ def compare_folders_at_time(base_directory, specific_times, var_names, folder_na
         folder_path = os.path.join(base_directory, folder_name)
         # Verify that the folder exists
         if not os.path.exists(folder_path):
-            print(f"Folder does not exist: {folder_path}")
+            print(f"Folder does not exist: {folder_path}. Skipping...")
             continue
         print(f"Processing folder: {folder_name}")
         
