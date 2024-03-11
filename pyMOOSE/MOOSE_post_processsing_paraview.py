@@ -422,58 +422,58 @@ def compare_folders_at_time(base_directory, specific_times, var_names, folder_na
         for time_value in specific_times:
             print(f"Comparing at {time_value} seconds...")
 
-    # Initialize the figure with one additional subplot for the contour
-    total_plots = len(var_names) + len(folder_names)  # One plot for each variable per folder + contour per folder
-    cols = 3  # Adjust the number of columns as needed
-    rows = (total_plots + cols - 1) // cols  # Calculate the number of rows needed
-    fig, axs = plt.subplots(rows, cols, figsize=(5 * cols, 4 * rows), constrained_layout=True)
-    axs = axs.flatten()  # Flatten the array to make indexing easier
+            # Initialize the figure with one additional subplot for the contour
+            total_plots = len(var_names) + len(folder_names)  # One plot for each variable per folder + contour per folder
+            cols = 3  # Adjust the number of columns as needed
+            rows = (total_plots + cols - 1) // cols  # Calculate the number of rows needed
+            fig, axs = plt.subplots(rows, cols, figsize=(5 * cols, 4 * rows), constrained_layout=True)
+            axs = axs.flatten()  # Flatten the array to make indexing easier
 
-    # Data structure for holding variable data from different folders
-    data_from_folders = {folder_name: {var_name: [] for var_name in var_names} for folder_name in folder_names}
+            # Data structure for holding variable data from different folders
+            data_from_folders = {folder_name: {var_name: [] for var_name in var_names} for folder_name in folder_names}
 
-    plot_index = 0  # To manage subplot indices
+            plot_index = 0  # To manage subplot indices
 
-    for folder_name in folder_names:
-        folder_path = os.path.join(base_directory, folder_name)
-        input_file_path = os.path.join(folder_path, "input_out.e")
-        print(f"Processing file: {input_file_path} for folder: {folder_name}")
+            for folder_name in folder_names:
+                folder_path = os.path.join(base_directory, folder_name)
+                input_file_path = os.path.join(folder_path, "input_out.e")
+                print(f"Processing file: {input_file_path} for folder: {folder_name}")
 
-        # Generate the contour plot for each folder
-        contour_ax = axs[plot_index]
-        plot_contours_from_csv_for_combined_plot(folder_path, contour_ax)
-        contour_ax.set_title(f"Contour: {folder_name}")
-        plot_index += 1
+                # Generate the contour plot for each folder
+                contour_ax = axs[plot_index]
+                plot_contours_from_csv_for_combined_plot(folder_path, contour_ax)
+                contour_ax.set_title(f"Contour: {folder_name}")
+                plot_index += 1
 
-        # Load the data for the specified time step
-        input_oute = IOSSReader(FileName=[input_file_path])
-        input_oute.UpdatePipeline()
+                # Load the data for the specified time step
+                input_oute = IOSSReader(FileName=[input_file_path])
+                input_oute.UpdatePipeline()
 
-        plotOverLine, point1, point2 = setup_plot_over_line(input_oute, time_value)
-        for var_name in var_names:
-            arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
-            data_from_folders[folder_name][var_name] = (arc_length, var_data)
+                plotOverLine, point1, point2 = setup_plot_over_line(input_oute, time_value)
+                for var_name in var_names:
+                    arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
+                    data_from_folders[folder_name][var_name] = (arc_length, var_data)
 
-    # Now plot the variables for each folder
-    for var_name in var_names:
-        for folder_name in folder_names:
-            arc_length, var_data = data_from_folders[folder_name][var_name]
-            axs[plot_index].plot(arc_length, var_data, label=f'{folder_name}')
-        axs[plot_index].set_xlabel('Distance along line')
-        axs[plot_index].set_ylabel(var_name)
-        axs[plot_index].legend()
-        axs[plot_index].set_title(f"{var_name} Comparison at {time_value} sec")
-        plot_index += 1
+            # Now plot the variables for each folder
+            for var_name in var_names:
+                for folder_name in folder_names:
+                    arc_length, var_data = data_from_folders[folder_name][var_name]
+                    axs[plot_index].plot(arc_length, var_data, label=f'{folder_name}')
+                axs[plot_index].set_xlabel('Distance along line')
+                axs[plot_index].set_ylabel(var_name)
+                axs[plot_index].legend()
+                axs[plot_index].set_title(f"{var_name} Comparison at {time_value} sec")
+                plot_index += 1
 
-    # Turn off any unused axes
-    for j in range(plot_index, len(axs)):
-        axs[j].axis('off')
+            # Turn off any unused axes
+            for j in range(plot_index, len(axs)):
+                axs[j].axis('off')
 
-    plt.suptitle("Variable Comparison Across Different Folders with Contours")
-    output_plot_path = os.path.join(base_directory, f"variable_contour_comparison_at_{time_value}_sec.png")
-    plt.savefig(output_plot_path)
-    plt.close()
-    print(f"Saved: {output_plot_path}")
+            plt.suptitle("Variable Comparison Across Different Folders with Contours")
+            output_plot_path = os.path.join(base_directory, f"variable_contour_comparison_at_{time_value}_sec.png")
+            plt.savefig(output_plot_path)
+            plt.close()
+            print(f"Saved: {output_plot_path}")
 
 
 

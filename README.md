@@ -1,6 +1,3 @@
-README.txt for pyMOOSE
-======================
-
 Package Name: pyMOOSE
 Version: 1.0.0
 Description:
