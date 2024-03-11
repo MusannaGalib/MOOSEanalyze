@@ -400,6 +400,50 @@ def plot_variables_over_line_combined_with_contour(base_directory, specific_time
             print(f"Saved: {output_plot_path}")
 
 
+
+def compare_folders_at_time(base_directory, folder_names, time_value, var_names):
+    # Prepare the data structure for holding variable data from different folders
+    data_from_folders = {folder_name: {var_name: [] for var_name in var_names} for folder_name in folder_names}
+
+    # Initialize the figure
+    total_plots = len(var_names)
+    cols = 3  # Adjust the number of columns as needed
+    rows = (total_plots + cols - 1) // cols  # Calculate the number of rows needed
+    fig, axs = plt.subplots(rows, cols, figsize=(5 * cols, 4 * rows), constrained_layout=True)
+    axs = axs.flatten()  # Flatten the array to make indexing easier
+
+    for folder_name in folder_names:
+        folder_path = os.path.join(base_directory, folder_name)
+        input_file_path = os.path.join(folder_path, "input_out.e")
+        print(f"Processing file: {input_file_path} for folder: {folder_name}")
+
+        # Load the data for the specified time step
+        input_oute = IOSSReader(FileName=[input_file_path])
+        input_oute.UpdatePipeline()
+
+        plotOverLine, point1, point2 = setup_plot_over_line(input_oute, time_value)
+        for var_name in var_names:
+            arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
+            data_from_folders[folder_name][var_name] = (arc_length, var_data)
+
+    # Now plot the variables for each folder
+    for i, var_name in enumerate(var_names):
+        for folder_name in folder_names:
+            arc_length, var_data = data_from_folders[folder_name][var_name]
+            axs[i].plot(arc_length, var_data, label=f'{folder_name}')
+        axs[i].set_xlabel('Distance along line')
+        axs[i].set_ylabel(var_name)
+        axs[i].legend()
+        axs[i].set_title(f"{var_name} Comparison at {time_value} sec")
+
+    plt.suptitle("Variable Comparison Across Different Folders")
+    output_plot_path = os.path.join(base_directory, f"variable_comparison_at_{time_value}_sec.png")
+    plt.savefig(output_plot_path)
+    plt.close()
+    print(f"Saved: {output_plot_path}")
+
+
+
 if __name__ == "__main__":
     # Get the directory of the currently executing script and then move up one level
     parent_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -425,3 +469,8 @@ if __name__ == "__main__":
     generate_and_save_contours(base_directory, specific_times)
     plot_contours_from_csv(base_directory)
     plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
+
+
+    folder_names = ['Bare_Zn', 'Trial_RS_4_1_no_RS_anisotropy_0.005_1']
+    for specific_time in specific_times:
+        compare_folders_at_time(base_directory, folder_names, specific_time, var_names)
