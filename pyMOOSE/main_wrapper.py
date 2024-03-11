@@ -21,7 +21,8 @@ try:
                          plot_variables_over_line_each_timestep_separately,
                          generate_and_save_contours,
                          plot_contours_from_csv,
-                         plot_variables_over_line_combined_with_contour,)
+                         plot_variables_over_line_combined_with_contour,
+                         compare_folders_at_time)
 except ModuleNotFoundError:
     print("Failed to import pyMOOSE. Ensure the package is correctly placed within the project.")
     sys.exit(1)
@@ -67,6 +68,10 @@ def main():
     generate_and_save_contours(base_directory, specific_times)
     plot_contours_from_csv(base_directory)
     plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
+
+    folder_names = ['Bare_Zn', 'Trial_RS_4_1_no_RS_anisotropy_0.005_1']
+    for specific_time in specific_times:
+        compare_folders_at_time(base_directory, folder_names, specific_time, var_names)
 
     print("All operations completed successfully.")
 

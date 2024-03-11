@@ -8,6 +8,7 @@ from .MOOSE_post_processsing_paraview import (
     generate_and_save_contours,
     plot_contours_from_csv,
     plot_variables_over_line_combined_with_contour,
+    compare_folders_at_time
 )
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "generate_and_save_contours",
     "plot_contours_from_csv",
     "plot_variables_over_line_combined_with_contour",
+    "compare_folders_at_time"
 ]
