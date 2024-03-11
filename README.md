@@ -31,6 +31,19 @@ Run  in command line -----> ./PvPython path/to/main_wrapper.py
 or
 Run  in command line -----> ./PvPython path/to/MOOSE_post_processsing_paraview.py (This will run in the Default Data Folder)
 ```
+For comparing between different folders manually
+```python
+    # Specify folder names to process only those folders
+    folder_names = ['Bare_Zn','MLD_Alucone_eigen_0.5']
+    for specific_time in specific_times:
+        compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
+```
+For comparing between different folders automatically
+```python
+    # Or, call without specifying folder_names to auto-detect and process all folders
+    compare_folders_at_time(base_directory, specific_times, var_names)
+```
+
 ## Authors
 This Software is developed by Musanna Galib
 
