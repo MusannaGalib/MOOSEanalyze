@@ -62,13 +62,13 @@ def main():
 
     # Executing all functions in sequence
     print("Executing all operations...")
-    find_and_process_files(base_directory, specific_times=specific_times)
-    plot_variables_across_timesteps(base_directory)
-    plot_variables_over_line_combined(base_directory, specific_times, var_names)
-    plot_variables_over_line_each_timestep_separately(base_directory, specific_times, var_names)
-    generate_and_save_contours(base_directory, specific_times)
-    plot_contours_from_csv(base_directory)
-    plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
+    #find_and_process_files(base_directory, specific_times=specific_times)
+    #plot_variables_across_timesteps(base_directory)
+    #plot_variables_over_line_combined(base_directory, specific_times, var_names)
+    #plot_variables_over_line_each_timestep_separately(base_directory, specific_times, var_names)
+    #generate_and_save_contours(base_directory, specific_times)
+    #plot_contours_from_csv(base_directory)
+    #plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
 
     folder_names = ['Bare_Zn', 'MLD_Alucone_eigen_0.5_1']
     for specific_time in specific_times:
