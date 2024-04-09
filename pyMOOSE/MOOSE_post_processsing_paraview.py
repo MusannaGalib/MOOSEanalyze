@@ -477,6 +477,39 @@ def compare_folders_at_time(base_directory, specific_times, var_names, folder_na
 
 
 
+def compare_two_contour_plots(base_directory, specific_time, folder_names):
+    # Assuming folder_names is a list with at least two folder names
+    if len(folder_names) < 2:
+        print("Need at least two folder names to compare.")
+        return
+    
+    # Initialize the figure for the two contour plots
+    fig, axs = plt.subplots(1, 2, figsize=(10, 5), constrained_layout=True)
+
+    # Plot the contours for the first two folders
+    for i, folder_name in enumerate(folder_names[:2]):
+        folder_path = os.path.join(base_directory, folder_name)
+        
+        # Verify that the folder exists
+        if not os.path.exists(folder_path):
+            print(f"Folder does not exist: {folder_path}. Skipping...")
+            continue
+        
+        print(f"Processing folder: {folder_name}")
+        input_file_path = os.path.join(folder_path, "input_out.e")
+        
+        # Generate the contour plot for the folder
+        plot_contours_from_csv_for_combined_plot(folder_path, axs[i])
+        axs[i].set_title(f"Contour: {folder_name}")
+
+    plt.suptitle(f"Contour Comparison at {specific_time} sec")
+    output_plot_path = os.path.join(base_directory, f"contour_comparison_at_{specific_time}_sec.png")
+    plt.savefig(output_plot_path)
+    plt.close()
+    print(f"Saved: {output_plot_path}")
+
+
+
 if __name__ == "__main__":
     # Get the directory of the currently executing script and then move up one level
     parent_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -503,11 +536,11 @@ if __name__ == "__main__":
     plot_contours_from_csv(base_directory)
     plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
 
-
     # Specify folder names to process only those folders
     folder_names = ['Bare_Zn','MLD_Alucone_eigen_0.5']
     for specific_time in specific_times:
         compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
+        compare_two_contour_plots(base_directory, specific_time, folder_names)
 
     # Or, call without specifying folder_names to auto-detect and process all folders
     # compare_folders_at_time(base_directory, specific_times, var_names)
