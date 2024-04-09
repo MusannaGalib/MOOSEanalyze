@@ -69,7 +69,7 @@ def main():
     plot_contours_from_csv(base_directory)
     plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
 
-    folder_names = ['Bare_Zn', 'Trial_RS_4_1_no_RS_anisotropy_0.005_1']
+    folder_names = ['Bare_Zn', 'MLD_Alucone_eigen_0.5_1']
     for specific_time in specific_times:
         compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
 
