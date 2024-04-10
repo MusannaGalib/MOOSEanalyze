@@ -3,6 +3,7 @@ import os
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import numpy as np
 import re
 import csv
@@ -476,31 +477,40 @@ def compare_folders_at_time(base_directory, specific_times, var_names, folder_na
             print(f"Saved: {output_plot_path}")
 
 
+
+
+
+
+
+
+
 def plot_contours_from_csv_rotated(root, ax):
     csv_files = [os.path.join(root, f) for f in os.listdir(root) if f.endswith('_contour.csv')]
     for csv_file in csv_files:
         data = pd.read_csv(csv_file)
         time_value = os.path.basename(csv_file).split('_Time_')[1].split('_')[0]
-        # Swapping x and y for the rotated plot
         ax.plot(data['Points:1'], data['Points:0'], label=f"{time_value} sec")
-    # Swapped xlim and ylim for rotation
     ax.set_ylim(0, 200)
-    ax.set_xlim(0, 200)
-    ax.legend()
-    # Axes labels are swapped because the plot is rotated
-    ax.set_ylabel('Distance along line')
+    ax.legend(loc='upper right')
     ax.set_xlabel('Variable of interest')
-    ax.set_title('Rotated Contour Plot')
     ax.grid(False)
+
 def compare_two_contour_plots(base_directory, specific_time, folder_names):
     if len(folder_names) < 2:
         print("Need at least two folder names to compare.")
         return
     
-    # Initialize the figure for the two contour plots with shared y-axis
-    fig, axs = plt.subplots(1, 2, figsize=(10, 5), sharey=True, constrained_layout=True)
+    # Create a figure
+    fig = plt.figure(figsize=(10, 5), constrained_layout=False)
 
-    # Plot the contours for the first two folders with the rotated plot function
+    # Manually set the positions of the subplots
+    ax1 = fig.add_axes([0, 0, 0.5, 1])  # Left plot from 0% to 50% of the figure width
+    ax2 = fig.add_axes([0.5, 0, 0.5, 1], sharey=ax1)  # Right plot from 50% to 100% of the figure width
+
+    # Turn off the y-ticks for the second plot
+    ax2.tick_params(left=False, labelleft=False)
+
+    # Plot the contours for the first two folders
     for i, folder_name in enumerate(folder_names[:2]):
         folder_path = os.path.join(base_directory, folder_name)
         
@@ -509,23 +519,29 @@ def compare_two_contour_plots(base_directory, specific_time, folder_names):
             continue
         
         print(f"Processing folder: {folder_name}")
-        
-        # Use the modified plot function for rotated plots
-        plot_contours_from_csv_rotated(folder_path, axs[i])
-        axs[i].set_title(f"Contour: {folder_name}")
+        plot_contours_from_csv_rotated(folder_path, (ax1 if i == 0 else ax2))
+        (ax1 if i == 0 else ax2).set_title(f"Contour: {folder_name}")
 
-    # Rotate the x-axis labels if they overlap or to improve readability
-    for ax in axs:
-        plt.setp(ax.get_xticklabels(), rotation=90)
+    # Set labels for the first plot
+    ax1.set_ylabel('Distance along line')
+    ax1.set_xlabel('Variable of interest')
 
-    # Adjust the layout so the y-axis labels do not overlap with the plots
-    plt.subplots_adjust(wspace=0.1)
+    # If desired, rotate the x-axis labels for better readability
+    for ax in [ax1, ax2]:
+        plt.setp(ax.get_xticklabels(), rotation=45)
 
-    plt.suptitle(f"Contour Comparison at {specific_time} sec")
-    output_plot_path = os.path.join(base_directory, f"rotated_contour_comparison_at_{specific_time}_sec.png")
-    plt.savefig(output_plot_path)
-    plt.close()
+    # Add a figure title
+    #fig.suptitle(f"Contour Comparison at {specific_time} sec")
+
+    # Save the figure
+    output_plot_path = os.path.join(base_directory, f"combined_contour_comparison_at_{specific_time}_sec.png")
+    fig.savefig(output_plot_path, bbox_inches='tight')
+    plt.close(fig)
     print(f"Saved: {output_plot_path}")
+
+
+
+
 
 
 
