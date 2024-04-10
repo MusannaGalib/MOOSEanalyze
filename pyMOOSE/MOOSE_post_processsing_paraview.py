@@ -491,9 +491,12 @@ def plot_contours_from_csv_rotated(root, ax):
         time_value = os.path.basename(csv_file).split('_Time_')[1].split('_')[0]
         ax.plot(data['Points:1'], data['Points:0'], label=f"{time_value} sec")
     ax.set_ylim(0, 200)
-    ax.legend(loc='upper right')
-    ax.set_xlabel('Variable of interest')
+    ax.legend(loc='upper right', fontsize=12)
+    ax.set_xlabel('um', fontsize=14)
+    #ax.set_ylabel('Distance along line', fontsize=14)
     ax.grid(False)
+    # Increase the font size for the tick labels
+    ax.tick_params(labelsize=12)
 
 def compare_two_contour_plots(base_directory, specific_time, folder_names):
     if len(folder_names) < 2:
@@ -501,7 +504,7 @@ def compare_two_contour_plots(base_directory, specific_time, folder_names):
         return
     
     # Create a figure
-    fig = plt.figure(figsize=(10, 5), constrained_layout=False)
+    fig = plt.figure(figsize=(6, 4), constrained_layout=False)
 
     # Manually set the positions of the subplots
     ax1 = fig.add_axes([0, 0, 0.5, 1])  # Left plot from 0% to 50% of the figure width
