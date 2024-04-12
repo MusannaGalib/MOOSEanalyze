@@ -4,6 +4,8 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+from scipy.interpolate import interp1d
+from scipy.interpolate import griddata
 import numpy as np
 import re
 import csv
