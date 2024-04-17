@@ -61,16 +61,16 @@ def main():
 
 
     # Executing all functions in sequence
-    print("Executing all operations...")
-    find_and_process_files(base_directory, specific_times=specific_times)
-    plot_variables_across_timesteps(base_directory)
-    plot_variables_over_line_combined(base_directory, specific_times, var_names)
-    plot_variables_over_line_each_timestep_separately(base_directory, specific_times, var_names)
+    #print("Executing all operations...")
+    #find_and_process_files(base_directory, specific_times=specific_times)
+    #plot_variables_across_timesteps(base_directory)
+    #plot_variables_over_line_combined(base_directory, specific_times, var_names)
+    #plot_variables_over_line_each_timestep_separately(base_directory, specific_times, var_names)
     generate_and_save_contours(base_directory, specific_times)
-    plot_contours_from_csv(base_directory)
-    plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
+    #plot_contours_from_csv(base_directory)
+    #plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
 
-    folder_names = ['Bare_Zn_anisotropy_0.4_1', 'MLD_Alucone_eigen_0.5_1']
+    folder_names = ['Bare_Zn_anisotropy_0.4_1', 'MLD_Alucone_eigen_0.5_anisotropy_0.4_1']
     for specific_time in specific_times:
         compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
         compare_two_contour_plots(base_directory, specific_time, folder_names)
