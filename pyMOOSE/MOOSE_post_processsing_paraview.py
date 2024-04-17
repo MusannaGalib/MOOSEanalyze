@@ -549,6 +549,61 @@ def compare_two_contour_plots(base_directory, specific_time, folder_names):
 
 
 
+def extract_data_and_save_to_csv(base_directory, specific_times, var_names, folder_names=None):
+    if folder_names is None:
+        folder_names = auto_detect_folders(base_directory)
+    
+    # Prepare to collect data for all specified times and variables across folders
+    results = []
+
+    for time_value in specific_times:
+        for folder_name in folder_names:
+            folder_path = os.path.join(base_directory, folder_name)
+            if not os.path.exists(folder_path):
+                print(f"Folder does not exist: {folder_path}. Skipping...")
+                continue
+            
+            input_file_path = os.path.join(folder_path, "input_out.e")
+            if not os.path.exists(input_file_path):
+                print(f"Input file does not exist: {input_file_path}. Skipping...")
+                continue
+            
+            # Load the input file and update it for the current time step
+            input_oute = OpenDataFile(input_file_path)
+            animationScene = GetAnimationScene()
+            animationScene.AnimationTime = time_value
+            animationScene.UpdateAnimationUsingDataTimeSteps()
+            
+            # Extract data
+            for var_name in var_names:
+                # Assuming function `extract_variable_data` is defined to extract data based on variable name
+                data = extract_variable_data(input_oute, var_name)
+                results.append({
+                    'folder_name': folder_name,
+                    'time_value': time_value,
+                    'variable_name': var_name,
+                    'data': data
+                })
+            
+            # Cleanup to prevent memory overflow if the datasets are large
+            Delete(input_oute)
+            del input_oute
+
+    # Convert results to a DataFrame
+    df = pd.DataFrame(results)
+    # Optionally, reshape or reorganize df here to fit desired output format
+    
+    # Save results to CSV
+    output_csv_path = os.path.join(base_directory, "extracted_data_summary.csv")
+    df.to_csv(output_csv_path, index=False)
+    print(f"Data extracted and saved to {output_csv_path}")
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     # Get the directory of the currently executing script and then move up one level
@@ -575,6 +630,7 @@ if __name__ == "__main__":
     generate_and_save_contours(base_directory, specific_times)
     plot_contours_from_csv(base_directory)
     plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
+    extract_data_and_save_to_csv(base_directory, specific_times, var_names, folder_names)
 
     # Specify folder names to process only those folders
     folder_names = ['Bare_Zn','MLD_Alucone_eigen_0.5']
