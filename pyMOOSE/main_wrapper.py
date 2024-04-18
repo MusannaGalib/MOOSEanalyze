@@ -1,5 +1,19 @@
+#!/usr/bin/env pvpython
 import os
 import sys
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from scipy.interpolate import interp1d
+from scipy.interpolate import griddata
+import numpy as np
+import re
+import csv
+import glob 
+from paraview.simple import *
+from vtk.numpy_interface import dataset_adapter as dsa
+from vtk.util import numpy_support
+from vtk.util.numpy_support import vtk_to_numpy
 
 
 
@@ -67,7 +81,7 @@ def main():
     #plot_variables_across_timesteps(base_directory)
     #plot_variables_over_line_combined(base_directory, specific_times, var_names)
     #plot_variables_over_line_each_timestep_separately(base_directory, specific_times, var_names)
-    #generate_and_save_contours(base_directory, specific_times)
+    generate_and_save_contours(base_directory, specific_times)
     #plot_contours_from_csv(base_directory)
     #plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
 
