@@ -1,2 +1,3 @@
 [console_scripts]
 your_script = your_package.module:function
+

@@ -19,6 +19,7 @@ from vtk.util.numpy_support import vtk_to_numpy
 
 #sys.path.append('D:\\Backup_31_July_2022\\Research\\Research\\pyMOOSE')
 
+#$Env:PATH += ";D:\Backup_31_July_2022\Research\Research\MOOSE\ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64\ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64\bin"
 
 
 # Assuming main_wrapper.py is in the pyMOOSE\pyMOOSE directory

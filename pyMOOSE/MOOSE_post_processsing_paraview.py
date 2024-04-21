@@ -11,6 +11,8 @@ import re
 import csv
 import glob 
 from paraview.simple import *
+import vtk
+from vtkmodules.vtkFiltersCore import vtkCellDataToPointData
 from vtk.numpy_interface import dataset_adapter as dsa
 from vtk.util import numpy_support
 from vtk.util.numpy_support import vtk_to_numpy
@@ -551,6 +553,70 @@ def compare_two_contour_plots(base_directory, specific_time, folder_names):
 
 
 
+
+
+def plot_variables_over_line_paper_format(base_directory, specific_times, var_names):
+    for root, dirs, files in os.walk(base_directory):
+        if "input_out.e" in files:
+            input_file_path = os.path.join(root, "input_out.e")
+            print(f"Processing file: {input_file_path}")
+
+            # Prepare the data structure for holding variable data across all times
+            data_across_times = {var_name: [] for var_name in var_names}
+
+            # Initialize the figure with one additional subplot for the contour
+            total_plots = len(var_names) + 1
+            cols = 3  # Set this to the number of columns you want
+            rows = (total_plots + cols - 1) // cols  # Calculate the number of rows needed
+            fig, axs = plt.subplots(rows, cols, figsize=(5 * cols, 4 * rows), constrained_layout=True)
+            axs = axs.flatten()  # Flatten the array to make indexing easier
+
+            # Generate the contour plot
+            contour_ax = axs[0]
+            plot_contours_from_csv_for_combined_plot(root, contour_ax)
+
+            # Now plot the variables over line
+            input_oute = IOSSReader(FileName=[input_file_path])
+            input_oute.UpdatePipeline()
+
+            # Collect data for each time step and plot
+            for time_value in specific_times:
+                plotOverLine, point1, point2 = setup_plot_over_line(input_oute, time_value)
+                for var_name in var_names:
+                    arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
+                    data_across_times[var_name].append((time_value, arc_length, var_data))
+
+            for i, var_name in enumerate(var_names, start=1):
+                for time_value, arc_length, var_data in data_across_times[var_name]:
+                    axs[i].plot(arc_length, var_data, label=f'{time_value} sec')
+                axs[i].set_xlabel('Distance along line')
+                axs[i].set_ylabel(var_name)
+                axs[i].legend()
+                axs[i].set_title(f"{var_name} Across Line")
+
+                # Plot sigma22_aux along the line
+                csv_file = os.path.join(root, f"{var_name}_contour.csv")
+                if os.path.exists(csv_file):
+                    plot_variables_along_line(csv_file, axs[i])
+
+            # Turn off any unused axes
+            for j in range(len(var_names) + 1, len(axs)):
+                axs[j].axis('off')
+
+            plt.suptitle(f"Analysis for {root}")
+            output_plot_path = os.path.join(root, "analysis_combined_with_contour.png")
+            plt.savefig(output_plot_path)
+            plt.close()
+            print(f"Saved: {output_plot_path}")
+
+def plot_variables_along_line(csv_file, ax):
+    data = pd.read_csv(csv_file)
+    ax.plot(data['Distance along line'], data['sigma22_aux'], label='sigma22_aux')
+    ax.set_ylim(0, 200)
+    ax.legend(loc='upper right', fontsize=12)
+    ax.set_xlabel('Distance along line', fontsize=14)
+    ax.grid(False)
+    ax.tick_params(labelsize=12)
 
 
 

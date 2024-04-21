@@ -1,73 +1,102 @@
+#!/usr/bin/env pvpython
 import os
 import sys
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from scipy.interpolate import interp1d
+from scipy.interpolate import griddata
+import numpy as np
+import re
+import csv
+import glob 
+from paraview.simple import *
+from vtk.numpy_interface import dataset_adapter as dsa
+from vtk.util import numpy_support
+from vtk.util.numpy_support import vtk_to_numpy
 
-# Import your package functions here, e.g.,
-# from your_package_name import generate_and_save_contours, plot_variables_across_timesteps, plot_variables_over_line_combined
-from pyMOOSE import (generate_and_save_contours, find_and_process_files,
-                     plot_variables_across_timesteps, plot_variables_over_line_combined,
-                     plot_variables_over_line_each_timestep_separately,
-                     plot_contours_from_csv, plot_variables_over_line_combined_with_contour)
+
+
+#sys.path.append('D:\\Backup_31_July_2022\\Research\\Research\\pyMOOSE')
+
+
+
+# Assuming main_wrapper.py is in the pyMOOSE\pyMOOSE directory
+# and you want to import modules from pyMOOSE (one level up)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+# Now try to import your modules
+try:
+    from pyMOOSE import (find_and_process_files,
+                         plot_variables_across_timesteps,
+                         plot_variables_over_line_combined,
+                         plot_variables_over_line_each_timestep_separately,
+                         generate_and_save_contours,
+                         plot_contours_from_csv,
+                         plot_variables_over_line_combined_with_contour,
+                         compare_folders_at_time,
+                         compare_two_contour_plots)
+
+except ModuleNotFoundError:
+    print("Failed to import pyMOOSE. Ensure the package is correctly placed within the project.")
+    sys.exit(1)
+
+
+    
+
 
 def main():
-    # Initial path configuration is moved inside the while loop to allow for repeated adjustments
+    # Initial path configuration
+    parent_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    default_base_directory = os.path.join(parent_directory, "Data")
 
-    # Functions mapping
-    operations = {
-        "1": {
-            "title": "Generate and Save Contours",
-            "function": generate_and_save_contours,
-            "args": [None, [50.0, 100.0, 150.0]]  # Placeholder for base_directory which will be set later
-        },
-        "2": {
-            "title": "Plot Variables Across Timesteps",
-            "function": plot_variables_across_timesteps,
-            "args": [None]  # Placeholder for base_directory which will be set later
-        },
-        "3": {
-            "title": "Plot Variables Over Line Combined",
-            "function": plot_variables_over_line_combined,
-            "args": [None, [50.0, 100.0, 150.0], ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']]  # Placeholder for base_directory which will be set later
-        },
-        # Add other operations here following the same structure
-    }
+    # Ask the user for a directory path or use the default
+    user_input = input(f"Press Input to use the default directory ({default_base_directory}) or enter a new path: ").strip()
+    base_directory = user_input if user_input else default_base_directory
+    print(f"Using directory: {base_directory}")
 
-    while True:
-        # Path configuration - moved here to allow user to redefine paths each time the loop starts
-        parent_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        default_script_directory = os.path.join(parent_directory, "Data")
-        default_base_directory = os.path.join(parent_directory, "Data")
 
-        user_input = input(f"Press Enter to use the default directory ({default_base_directory}) or enter a new path: ").strip()
-        if user_input:
-            script_directory = user_input
-            base_directory = user_input
-            print(f"Using user-specified directory: {user_input}")
-        else:
-            script_directory = default_script_directory
-            base_directory = default_base_directory
-            print(f"Using default directory: {base_directory}")
+    # Specific times and variables might need to be adjusted based on your requirements
+    specific_times = [50.0, 150.0, 220.0]
+    var_names = ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']
 
-        # Update args in operations with the chosen base_directory
-        for operation in operations.values():
-            operation['args'][0] = base_directory  # Update the first argument with the current base_directory
+    # Default specific times and variable names
+    #default_specific_times = "50.0, 100.0, 150.0"
+    #default_var_names = "disp, eta, pot, w, sigma11_aux, sigma22_aux"
 
-        # The rest of your existing code for operations selection
-        print("\nSelect the operation you want to perform:")
-        for key, operation in operations.items():
-            print(f"{key}. {operation['title']}")
-        print("0. Exit")
+    # Ask the user for custom specific times or use the default
+    #specific_times_input = input(f"Enter specific times separated by commas [{default_specific_times}] (press enter to use default): ").strip()
+    #specific_times = [float(time.strip()) for time in specific_times_input.split(",")] if specific_times_input else [float(time.strip()) for time in default_specific_times.split(",")]
 
-        choice = input("\nEnter your choice: ")
-        if choice == "0":
-            print("Exiting the program.")
-            break
+    # Ask the user for custom variable names or use the default
+    #var_names_input = input(f"Enter variable names separated by commas [{default_var_names}] (press enter to use default): ").strip()
+    #var_names = [name.strip() for name in var_names_input.split(",")] if var_names_input else [name.strip() for name in default_var_names.split(",")]
 
-        operation = operations.get(choice)
-        if operation:
-            # Dynamically call the function based on the user's choice
-            operation['function'](*operation['args'])
-        else:
-            print("Invalid choice. Please try again.")
+
+    # Executing all functions in sequence
+    #print("Executing all operations...")
+    #find_and_process_files(base_directory, specific_times=specific_times)
+    #plot_variables_across_timesteps(base_directory)
+    #plot_variables_over_line_combined(base_directory, specific_times, var_names)
+    #plot_variables_over_line_each_timestep_separately(base_directory, specific_times, var_names)
+    generate_and_save_contours(base_directory, specific_times)
+    #plot_contours_from_csv(base_directory)
+    #plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
+
+
+    folder_names = ['Bare_Zn_anisotropy_0.4_1', 'MLD_Alucone_eigen_0.5_anisotropy_0.4_1']
+    for specific_time in specific_times:
+        compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
+        compare_two_contour_plots(base_directory, specific_time, folder_names)
+
+
+
+    # Or, call without specifying folder_names to auto-detect and process all folders
+    #compare_folders_at_time(base_directory, specific_times, var_names)    
+
+    print("All operations completed successfully.")
 
 if __name__ == "__main__":
     main()
