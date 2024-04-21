@@ -560,6 +560,8 @@ def compare_two_contour_plots(base_directory, specific_time, folder_names):
 
 
 
+
+
 def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_names, output_directory=None):
     if len(folder_names) < 2:
         print("Need at least two folder names to compare.")
@@ -578,9 +580,9 @@ def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_n
             continue
         
         print(f"Processing folder: {folder_name}")
-        plot_sigma22_aux_from_folder(folder_path, specific_times, (ax1 if i == 0 else ax2), ax2)  # Pass ax2 to the function
+        plot_sigma22_aux_from_folder(folder_path, specific_times, (ax1 if i == 0 else ax2), (i == 0), ax2)
 
-    ax2.set_xlabel('Distance along line')
+    ax2.set_xlabel('Distance along line', fontsize=16)  # Increase font size
 
     plt.tight_layout(pad=0)
     
@@ -591,7 +593,7 @@ def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_n
     print(f"Saved: {output_plot_path}")
 
 
-def plot_sigma22_aux_from_folder(folder_path, specific_times, ax, ax2):  # Add ax2 as an argument
+def plot_sigma22_aux_from_folder(folder_path, specific_times, ax, is_top_plot, ax2):
     var_name = 'sigma22_aux'
     for file in os.listdir(folder_path):
         if file.endswith("input_out.e"):
@@ -605,13 +607,19 @@ def plot_sigma22_aux_from_folder(folder_path, specific_times, ax, ax2):  # Add a
                 arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
                 ax.plot(arc_length, var_data, label=f"{time_value} sec")
 
-    ax.set_ylabel(var_name)
-    ax.legend(loc='upper right', fontsize=11)
+    ax.set_ylabel(var_name, fontsize=16)  # Increase font size
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.2f}'))  # Set significant decimal digits
     ax.grid(False)
     ax.tick_params(labelsize=14)
       
+    if is_top_plot:
+        ax.legend(loc='upper right', fontsize=11)
+    else:
+        ax.legend(loc='lower right', fontsize=11)
+      
     if ax is not ax2:
         ax.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)  # Remove ticks and labels on the x-axis
+
 
 
 
