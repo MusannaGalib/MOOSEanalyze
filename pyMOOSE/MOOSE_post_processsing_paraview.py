@@ -555,68 +555,63 @@ def compare_two_contour_plots(base_directory, specific_time, folder_names):
 
 
 
-def plot_variables_over_line_paper_format(base_directory, specific_times, var_names):
-    for root, dirs, files in os.walk(base_directory):
-        if "input_out.e" in files:
-            input_file_path = os.path.join(root, "input_out.e")
-            print(f"Processing file: {input_file_path}")
 
-            # Prepare the data structure for holding variable data across all times
-            data_across_times = {var_name: [] for var_name in var_names}
 
-            # Initialize the figure with one additional subplot for the contour
-            total_plots = len(var_names) + 1
-            cols = 3  # Set this to the number of columns you want
-            rows = (total_plots + cols - 1) // cols  # Calculate the number of rows needed
-            fig, axs = plt.subplots(rows, cols, figsize=(5 * cols, 4 * rows), constrained_layout=True)
-            axs = axs.flatten()  # Flatten the array to make indexing easier
 
-            # Generate the contour plot
-            contour_ax = axs[0]
-            plot_contours_from_csv_for_combined_plot(root, contour_ax)
 
-            # Now plot the variables over line
+
+def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_names, output_directory=None):
+    if len(folder_names) < 2:
+        print("Need at least two folder names to compare.")
+        return
+    
+    if output_directory is None:
+        output_directory = base_directory
+    
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 12), sharex=True)
+
+    for i, folder_name in enumerate(folder_names[:2]):
+        folder_path = os.path.join(base_directory, folder_name)
+        
+        if not os.path.exists(folder_path):
+            print(f"Folder does not exist: {folder_path}. Skipping...")
+            continue
+        
+        print(f"Processing folder: {folder_name}")
+        plot_sigma22_aux_from_folder(folder_path, specific_times, (ax1 if i == 0 else ax2))
+        (ax1 if i == 0 else ax2).set_title(f"sigma22_aux: {folder_name}")
+
+    ax2.set_xlabel('Distance along line')
+
+    plt.tight_layout(pad=0)
+    
+    # Save the figure as PNG with increased quality and folder names in the file name
+    output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_{folder_names[0]}_{folder_names[1]}.png")
+    plt.savefig(output_plot_path, format='png', bbox_inches='tight', dpi=300)
+    plt.close(fig)
+    print(f"Saved: {output_plot_path}")
+
+
+def plot_sigma22_aux_from_folder(folder_path, specific_times, ax):
+    var_name = 'sigma22_aux'
+    for file in os.listdir(folder_path):
+        if file.endswith("input_out.e"):
+            input_file_path = os.path.join(folder_path, file)
             input_oute = IOSSReader(FileName=[input_file_path])
             input_oute.UpdatePipeline()
 
-            # Collect data for each time step and plot
+            # Collect data for each time step
             for time_value in specific_times:
-                plotOverLine, point1, point2 = setup_plot_over_line(input_oute, time_value)
-                for var_name in var_names:
-                    arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
-                    data_across_times[var_name].append((time_value, arc_length, var_data))
+                plotOverLine, _, _ = setup_plot_over_line(input_oute, time_value)
+                arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
+                ax.plot(arc_length, var_data, label=f"{time_value} sec")
 
-            for i, var_name in enumerate(var_names, start=1):
-                for time_value, arc_length, var_data in data_across_times[var_name]:
-                    axs[i].plot(arc_length, var_data, label=f'{time_value} sec')
-                axs[i].set_xlabel('Distance along line')
-                axs[i].set_ylabel(var_name)
-                axs[i].legend()
-                axs[i].set_title(f"{var_name} Across Line")
-
-                # Plot sigma22_aux along the line
-                csv_file = os.path.join(root, f"{var_name}_contour.csv")
-                if os.path.exists(csv_file):
-                    plot_variables_along_line(csv_file, axs[i])
-
-            # Turn off any unused axes
-            for j in range(len(var_names) + 1, len(axs)):
-                axs[j].axis('off')
-
-            plt.suptitle(f"Analysis for {root}")
-            output_plot_path = os.path.join(root, "analysis_combined_with_contour.png")
-            plt.savefig(output_plot_path)
-            plt.close()
-            print(f"Saved: {output_plot_path}")
-
-def plot_variables_along_line(csv_file, ax):
-    data = pd.read_csv(csv_file)
-    ax.plot(data['Distance along line'], data['sigma22_aux'], label='sigma22_aux')
-    ax.set_ylim(0, 200)
-    ax.legend(loc='upper right', fontsize=12)
-    ax.set_xlabel('Distance along line', fontsize=14)
+    ax.set_ylabel(var_name)
+    ax.legend(loc='upper right', fontsize=14)
     ax.grid(False)
     ax.tick_params(labelsize=12)
+
+
 
 
 

@@ -39,7 +39,7 @@ try:
                          plot_variables_over_line_combined_with_contour,
                          compare_folders_at_time,
                          compare_two_contour_plots,
-                         plot_variables_over_line_paper_format)
+                         plot_sigma22_aux_over_line_combined)
 
 except ModuleNotFoundError:
     print("Failed to import pyMOOSE. Ensure the package is correctly placed within the project.")
@@ -86,14 +86,14 @@ def main():
     generate_and_save_contours(base_directory, specific_times)
     #plot_contours_from_csv(base_directory)
     #plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
-    #plot_variables_over_line_paper_format(base_directory, specific_times, var_names)
+    #plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_names)
 
 
     folder_names = ['Bare_Zn_anisotropy_0.4_1', 'MLD_Alucone_eigen_0.5_anisotropy_0.4_1']
     for specific_time in specific_times:
         compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
         compare_two_contour_plots(base_directory, specific_time, folder_names)
-        plot_variables_over_line_paper_format(base_directory, specific_times, var_names)
+        plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_names)
 
 
     # Or, call without specifying folder_names to auto-detect and process all folders

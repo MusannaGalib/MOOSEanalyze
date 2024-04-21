@@ -11,6 +11,8 @@ import re
 import csv
 import glob 
 from paraview.simple import *
+import vtk
+from vtkmodules.vtkFiltersCore import vtkCellDataToPointData
 from vtk.numpy_interface import dataset_adapter as dsa
 from vtk.util import numpy_support
 from vtk.util.numpy_support import vtk_to_numpy
@@ -551,6 +553,44 @@ def compare_two_contour_plots(base_directory, specific_time, folder_names):
 
 
 
+
+
+def plot_variables_over_line_paper_format(base_directory, specific_times, var_names):
+    for root, dirs, files in os.walk(base_directory):
+        if "input_out.e" in files:
+            input_file_path = os.path.join(root, "input_out.e")
+            print(f"Processing file: {input_file_path}")
+
+            # Initialize the figure with one subplot
+            fig, ax = plt.subplots(figsize=(8, 6))
+
+            # Plot the contour
+            plot_contours_from_csv_rotated(root, ax)
+
+            # Now plot sigma22_aux along the line
+            csv_file = os.path.join(root, "sigma22_aux_contour.csv")
+            if os.path.exists(csv_file):
+                plot_variables_along_line_paper_format(csv_file, ax)
+
+            # Add labels and legend
+            ax.set_xlabel('Distance along line', fontsize=14)
+            ax.set_ylabel('sigma22_aux', fontsize=14)
+            ax.legend()
+
+            # Save the figure
+            output_plot_path = os.path.join(root, "sigma22_aux_over_line.png")
+            plt.savefig(output_plot_path)
+            plt.close(fig)
+            print(f"Saved: {output_plot_path}")
+
+def plot_variables_along_line_paper_format(csv_file, ax):
+    data = pd.read_csv(csv_file)
+    ax.plot(data['Distance along line'], data['sigma22_aux'], label='sigma22_aux')
+    ax.set_ylim(0, 200)
+    ax.legend(loc='upper right', fontsize=12)
+    ax.set_xlabel('Distance along line', fontsize=14)
+    ax.grid(False)
+    ax.tick_params(labelsize=12)
 
 
 
