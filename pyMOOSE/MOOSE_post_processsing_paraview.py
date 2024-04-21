@@ -568,7 +568,7 @@ def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_n
     if output_directory is None:
         output_directory = base_directory
     
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 12), sharex=True)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(4, 6), sharex=True)
 
     for i, folder_name in enumerate(folder_names[:2]):
         folder_path = os.path.join(base_directory, folder_name)
@@ -578,8 +578,7 @@ def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_n
             continue
         
         print(f"Processing folder: {folder_name}")
-        plot_sigma22_aux_from_folder(folder_path, specific_times, (ax1 if i == 0 else ax2))
-        (ax1 if i == 0 else ax2).set_title(f"sigma22_aux: {folder_name}")
+        plot_sigma22_aux_from_folder(folder_path, specific_times, (ax1 if i == 0 else ax2), ax2)  # Pass ax2 to the function
 
     ax2.set_xlabel('Distance along line')
 
@@ -587,12 +586,12 @@ def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_n
     
     # Save the figure as PNG with increased quality and folder names in the file name
     output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_{folder_names[0]}_{folder_names[1]}.png")
-    plt.savefig(output_plot_path, format='png', bbox_inches='tight', dpi=300)
+    plt.savefig(output_plot_path, format='png', bbox_inches='tight', dpi=600)
     plt.close(fig)
     print(f"Saved: {output_plot_path}")
 
 
-def plot_sigma22_aux_from_folder(folder_path, specific_times, ax):
+def plot_sigma22_aux_from_folder(folder_path, specific_times, ax, ax2):  # Add ax2 as an argument
     var_name = 'sigma22_aux'
     for file in os.listdir(folder_path):
         if file.endswith("input_out.e"):
@@ -607,9 +606,12 @@ def plot_sigma22_aux_from_folder(folder_path, specific_times, ax):
                 ax.plot(arc_length, var_data, label=f"{time_value} sec")
 
     ax.set_ylabel(var_name)
-    ax.legend(loc='upper right', fontsize=14)
+    ax.legend(loc='upper right', fontsize=11)
     ax.grid(False)
-    ax.tick_params(labelsize=12)
+    ax.tick_params(labelsize=14)
+      
+    if ax is not ax2:
+        ax.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)  # Remove ticks and labels on the x-axis
 
 
 
