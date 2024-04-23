@@ -10,7 +10,8 @@ from .MOOSE_post_processsing_paraview import (
     plot_variables_over_line_combined_with_contour,
     compare_folders_at_time,
     compare_two_contour_plots,
-    plot_sigma22_aux_over_line_combined
+    plot_sigma22_aux_over_line_combined_top_bottom,
+    plot_sigma22_aux_over_line_combined_left_right
 )
 
 __all__ = [
@@ -23,4 +24,5 @@ __all__ = [
     "plot_variables_over_line_combined_with_contour",
     "compare_folders_at_time",
     "compare_two_contour_plots",
-    "plot_sigma22_aux_over_line_combined"]
+    "plot_sigma22_aux_over_line_combined_top_bottom",
+    "plot_sigma22_aux_over_line_combined_left_right"]

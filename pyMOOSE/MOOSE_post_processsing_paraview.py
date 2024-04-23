@@ -563,7 +563,7 @@ def compare_two_contour_plots(base_directory, specific_time, folder_names):
 
 
 
-def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_names, output_directory=None):
+def plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names, output_directory=None):
     if len(folder_names) < 2:
         print("Need at least two folder names to compare.")
         return
@@ -582,7 +582,7 @@ def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_n
         
         print(f"Processing folder: {folder_name}")
         is_top_plot = folder_name.startswith("Bare_Zn")  # Check if it's a top plot
-        plot_sigma22_aux_from_folder(folder_path, specific_times, (ax1 if i == 0 else ax2), is_top_plot, ax2)
+        plot_sigma22_aux_from_folder_top_bottom(folder_path, specific_times, (ax1 if i == 0 else ax2), is_top_plot, ax2)
 
     ax2.set_xlabel('x (${\mu m}$)', fontsize=16)  # Increase font size
 
@@ -595,7 +595,7 @@ def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_n
     print(f"Saved: {output_plot_path}")
 
 
-def plot_sigma22_aux_from_folder(folder_path, specific_times, ax, is_top_plot, ax2):
+def plot_sigma22_aux_from_folder_top_bottom(folder_path, specific_times, ax, is_top_plot, ax2):
     var_name = 'sigma22_aux'
     for file in os.listdir(folder_path):
         if file.endswith("input_out.e"):
@@ -633,6 +633,72 @@ def plot_sigma22_aux_from_folder(folder_path, specific_times, ax, is_top_plot, a
 
 
 
+
+def plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names, output_directory=None):
+    if len(folder_names) < 2:
+        print("Need at least two folder names to compare.")
+        return
+    
+    if output_directory is None:
+        output_directory = base_directory
+    
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 6), sharey=True)  # Change here to 1 row, 2 columns
+
+    for i, folder_name in enumerate(folder_names[:2]):
+        folder_path = os.path.join(base_directory, folder_name)
+        
+        if not os.path.exists(folder_path):
+            print(f"Folder does not exist: {folder_path}. Skipping...")
+            continue
+        
+        print(f"Processing folder: {folder_name}")
+        is_top_plot = folder_name.startswith("Bare_Zn")  # Check if it's a top plot
+        plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, (ax1 if i == 0 else ax2), is_top_plot, ax2)
+
+    ax2.set_xlabel('x (${\mu m}$)', fontsize=16)  # Increase font size
+
+    plt.tight_layout(pad=0)
+    
+    # Save the figure as PNG with increased quality and folder names in the file name
+    output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_{folder_names[0]}_{folder_names[1]}.png")
+    plt.savefig(output_plot_path, format='png', bbox_inches='tight', dpi=600)
+    plt.close(fig)
+    print(f"Saved: {output_plot_path}")
+
+
+def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_top_plot, ax2):
+    var_name = 'sigma22_aux'
+    for file in os.listdir(folder_path):
+        if file.endswith("input_out.e"):
+            input_file_path = os.path.join(folder_path, file)
+            input_oute = IOSSReader(FileName=[input_file_path])
+            input_oute.UpdatePipeline()
+
+            # Collect data for each time step
+            for time_value in specific_times:
+                plotOverLine, _, _ = setup_plot_over_line(input_oute, time_value)
+                arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
+                if is_top_plot:
+                    var_data *= 1e6  # Multiply by 10^6 to convert from GPa to kPa for top plot
+                ax.plot(arc_length, var_data, label=f"{time_value} sec")
+
+    if is_top_plot:
+        #ax.set_ylabel(f'{var_name} (Kpa)', fontsize=16)  # Increase font size and add unit for top plot
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$ (KPa)', fontsize=16)
+    else:
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$  (GPa)', fontsize=16)  # Increase font size and add unit for bottom plot
+    
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.1f}'))  # Set significant decimal digits
+    ax.grid(False)
+    ax.tick_params(labelsize=14)
+      
+    if is_top_plot:
+        ax.legend(loc='upper right', fontsize=11)
+    else:
+        ax.legend(loc='lower right', fontsize=11)
+      
+    if ax is not ax2:
+        ax.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)  # Remove ticks and labels on the x-axis
 
 
 
