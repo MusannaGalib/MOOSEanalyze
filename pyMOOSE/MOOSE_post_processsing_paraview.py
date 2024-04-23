@@ -713,7 +713,7 @@ def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_
         
         # Extend the x-axis limits slightly to avoid overlap with the right plot
         xlim = ax.get_xlim()
-        ax.set_xlim(xlim[0], xlim[1] + 0.05 * (xlim[1] - xlim[0]))    
+        ax.set_xlim(xlim[0], xlim[1] + 0.09 * (xlim[1] - xlim[0]))    
 
 
     
