@@ -634,6 +634,9 @@ def plot_sigma22_aux_from_folder_top_bottom(folder_path, specific_times, ax, is_
 
 
 
+
+
+
 def plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names, output_directory=None):
     if len(folder_names) < 2:
         print("Need at least two folder names to compare.")
@@ -642,7 +645,7 @@ def plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_time
     if output_directory is None:
         output_directory = base_directory
     
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 6), sharey=True)  # Change here to 1 row, 2 columns
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7, 3), sharey=False, sharex=True, gridspec_kw={'wspace': 0})
 
     for i, folder_name in enumerate(folder_names[:2]):
         folder_path = os.path.join(base_directory, folder_name)
@@ -653,20 +656,20 @@ def plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_time
         
         print(f"Processing folder: {folder_name}")
         is_top_plot = folder_name.startswith("Bare_Zn")  # Check if it's a top plot
-        plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, (ax1 if i == 0 else ax2), is_top_plot, ax2)
+        plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, (ax1 if i == 0 else ax2), is_top_plot)
 
-    ax2.set_xlabel('x (${\mu m}$)', fontsize=16)  # Increase font size
+    ax1.set_xlabel('x (${\mu m}$)', fontsize=16)
+    ax2.set_xlabel('x (${\mu m}$)', fontsize=16)
 
     plt.tight_layout(pad=0)
     
-    # Save the figure as PNG with increased quality and folder names in the file name
     output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_Left_right_{folder_names[0]}_{folder_names[1]}.png")
     plt.savefig(output_plot_path, format='png', bbox_inches='tight', dpi=600)
     plt.close(fig)
     print(f"Saved: {output_plot_path}")
 
 
-def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_top_plot, ax2):
+def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_top_plot):
     var_name = 'sigma22_aux'
     for file in os.listdir(folder_path):
         if file.endswith("input_out.e"):
@@ -674,31 +677,28 @@ def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_
             input_oute = IOSSReader(FileName=[input_file_path])
             input_oute.UpdatePipeline()
 
-            # Collect data for each time step
             for time_value in specific_times:
                 plotOverLine, _, _ = setup_plot_over_line(input_oute, time_value)
                 arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
                 if is_top_plot:
-                    var_data *= 1e6  # Multiply by 10^6 to convert from GPa to kPa for top plot
+                    var_data *= 1e6
                 ax.plot(arc_length, var_data, label=f"{time_value} sec")
 
     if is_top_plot:
-        #ax.set_ylabel(f'{var_name} (Kpa)', fontsize=16)  # Increase font size and add unit for top plot
-        ax.set_ylabel(f'${{\sigma}}_{{22}}$ (KPa)', fontsize=16)
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$ (kPa)', fontsize=22)
+        ax.legend(loc='upper right', fontsize=15)
     else:
-        ax.set_ylabel(f'${{\sigma}}_{{22}}$  (GPa)', fontsize=16)  # Increase font size and add unit for bottom plot
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$  (GPa)', fontsize=22)
+        ax.legend(loc='lower right', fontsize=15)
     
-    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.1f}'))  # Set significant decimal digits
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.1f}'))
     ax.grid(False)
-    ax.tick_params(labelsize=14)
-      
-    if is_top_plot:
-        ax.legend(loc='upper right', fontsize=11)
-    else:
-        ax.legend(loc='lower right', fontsize=11)
-      
-    if ax is not ax2:
-        ax.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)  # Remove ticks and labels on the x-axis
+    ax.tick_params(labelsize=18)
+    
+    if not is_top_plot:  # Move y-axis ticks and labels to the right for the right plot
+        ax.yaxis.set_label_position("right")
+        ax.yaxis.tick_right()
+
 
 
 
