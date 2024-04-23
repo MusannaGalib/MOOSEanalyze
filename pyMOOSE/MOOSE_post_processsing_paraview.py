@@ -705,6 +705,15 @@ def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_
     if not is_top_plot:  # Move y-axis ticks and labels to the right for the right plot
         ax.yaxis.set_label_position("right")
         ax.yaxis.tick_right()
+    
+    if not is_top_plot:  # Move y-axis ticks and labels to the right for the bottom plot
+        ax.yaxis.set_label_position("right")
+        ax.yaxis.tick_right()
+        ax.set_yticks(ax.get_yticks()[1:])  # Hide the first tick label
+        
+        # Extend the x-axis limits slightly to avoid overlap with the right plot
+        xlim = ax.get_xlim()
+        ax.set_xlim(xlim[0], xlim[1] + 0.05 * (xlim[1] - xlim[0]))    
 
 
     
