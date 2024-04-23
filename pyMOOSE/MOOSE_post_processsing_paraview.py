@@ -686,14 +686,14 @@ def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_
 
     if is_top_plot:
         ax.set_ylabel(f'${{\sigma}}_{{22}}$ (kPa)', fontsize=22)
-        ax.legend(loc='upper right', fontsize=15)
+        #ax.legend(loc='upper right', fontsize=15)
     else:
         ax.set_ylabel(f'${{\sigma}}_{{22}}$  (GPa)', fontsize=22)
-        ax.legend(loc='lower right', fontsize=15)
+        #ax.legend(loc='lower right', fontsize=15)
     
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.1f}'))
     ax.grid(False)
-    ax.tick_params(labelsize=18)
+    ax.tick_params(labelsize=20)
     
     if not is_top_plot:  # Move y-axis ticks and labels to the right for the right plot
         ax.yaxis.set_label_position("right")
