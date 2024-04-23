@@ -589,7 +589,7 @@ def plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_time
     plt.tight_layout(pad=0)
     
     # Save the figure as PNG with increased quality and folder names in the file name
-    output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_{folder_names[0]}_{folder_names[1]}.png")
+    output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_top_bottom_{folder_names[0]}_{folder_names[1]}.png")
     plt.savefig(output_plot_path, format='png', bbox_inches='tight', dpi=600)
     plt.close(fig)
     print(f"Saved: {output_plot_path}")
@@ -660,7 +660,7 @@ def plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_time
     plt.tight_layout(pad=0)
     
     # Save the figure as PNG with increased quality and folder names in the file name
-    output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_{folder_names[0]}_{folder_names[1]}.png")
+    output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_Left_right_{folder_names[0]}_{folder_names[1]}.png")
     plt.savefig(output_plot_path, format='png', bbox_inches='tight', dpi=600)
     plt.close(fig)
     print(f"Saved: {output_plot_path}")
