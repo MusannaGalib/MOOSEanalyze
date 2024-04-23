@@ -3,6 +3,7 @@ import os
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import matplotlib.gridspec as gridspec
 from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
@@ -571,7 +572,7 @@ def plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_time
     if output_directory is None:
         output_directory = base_directory
     
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(3, 4), sharex=True)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(4, 5), sharex=True)
 
     for i, folder_name in enumerate(folder_names[:2]):
         folder_path = os.path.join(base_directory, folder_name)
@@ -613,13 +614,13 @@ def plot_sigma22_aux_from_folder_top_bottom(folder_path, specific_times, ax, is_
 
     if is_top_plot:
         #ax.set_ylabel(f'{var_name} (Kpa)', fontsize=16)  # Increase font size and add unit for top plot
-        ax.set_ylabel(f'${{\sigma}}_{{22}}$ (KPa)', fontsize=16)
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$ (KPa)', fontsize=22)
     else:
-        ax.set_ylabel(f'${{\sigma}}_{{22}}$  (GPa)', fontsize=16)  # Increase font size and add unit for bottom plot
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$  (GPa)', fontsize=22)  # Increase font size and add unit for bottom plot
     
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.1f}'))  # Set significant decimal digits
     ax.grid(False)
-    ax.tick_params(labelsize=14)
+    ax.tick_params(labelsize=22)
       
     if is_top_plot:
         ax.legend(loc='upper right', fontsize=11)
@@ -628,6 +629,9 @@ def plot_sigma22_aux_from_folder_top_bottom(folder_path, specific_times, ax, is_
       
     if ax is not ax2:
         ax.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)  # Remove ticks and labels on the x-axis
+
+    ax.yaxis.set_label_position("right")
+    ax.yaxis.tick_right()    
 
 
 
@@ -658,8 +662,11 @@ def plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_time
         is_top_plot = folder_name.startswith("Bare_Zn")  # Check if it's a top plot
         plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, (ax1 if i == 0 else ax2), is_top_plot)
 
-    ax1.set_xlabel('x (${\mu m}$)', fontsize=16)
-    ax2.set_xlabel('x (${\mu m}$)', fontsize=16)
+    ax1.set_xlabel('x (${\mu m}$)', fontsize=22)
+    ax2.set_xlabel('x (${\mu m}$)', fontsize=22)
+
+
+
 
     plt.tight_layout(pad=0)
     
@@ -698,6 +705,9 @@ def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_
     if not is_top_plot:  # Move y-axis ticks and labels to the right for the right plot
         ax.yaxis.set_label_position("right")
         ax.yaxis.tick_right()
+
+
+    
 
 
 

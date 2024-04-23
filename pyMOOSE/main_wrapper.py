@@ -62,7 +62,7 @@ def main():
 
 
     # Specific times and variables might need to be adjusted based on your requirements
-    specific_times = [50.0, 150.0, 220.0]
+    specific_times = [150.0, 200.0, 220.0]
     var_names = ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']
 
     # Default specific times and variable names
