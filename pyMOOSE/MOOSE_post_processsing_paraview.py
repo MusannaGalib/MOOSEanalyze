@@ -571,7 +571,7 @@ def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_n
     if output_directory is None:
         output_directory = base_directory
     
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(4, 6), sharex=True)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(3, 4), sharex=True)
 
     for i, folder_name in enumerate(folder_names[:2]):
         folder_path = os.path.join(base_directory, folder_name)
@@ -584,7 +584,7 @@ def plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_n
         is_top_plot = folder_name.startswith("Bare_Zn")  # Check if it's a top plot
         plot_sigma22_aux_from_folder(folder_path, specific_times, (ax1 if i == 0 else ax2), is_top_plot, ax2)
 
-    ax2.set_xlabel('Distance along line', fontsize=16)  # Increase font size
+    ax2.set_xlabel('x (${\mu m}$)', fontsize=16)  # Increase font size
 
     plt.tight_layout(pad=0)
     
@@ -612,11 +612,12 @@ def plot_sigma22_aux_from_folder(folder_path, specific_times, ax, is_top_plot, a
                 ax.plot(arc_length, var_data, label=f"{time_value} sec")
 
     if is_top_plot:
-        ax.set_ylabel(f'{var_name} (Kpa)', fontsize=16)  # Increase font size and add unit for top plot
+        #ax.set_ylabel(f'{var_name} (Kpa)', fontsize=16)  # Increase font size and add unit for top plot
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$ (KPa)', fontsize=16)
     else:
-        ax.set_ylabel(f'{var_name} (GPa)', fontsize=16)  # Increase font size and add unit for bottom plot
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$  (GPa)', fontsize=16)  # Increase font size and add unit for bottom plot
     
-    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.2f}'))  # Set significant decimal digits
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.1f}'))  # Set significant decimal digits
     ax.grid(False)
     ax.tick_params(labelsize=14)
       
