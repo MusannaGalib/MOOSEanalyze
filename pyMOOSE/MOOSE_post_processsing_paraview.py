@@ -716,8 +716,61 @@ def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_
         ax.set_xlim(xlim[0], xlim[1] + 0.09 * (xlim[1] - xlim[0]))    
 
 
-    
 
+def calculate_eta_distance_with_time(base_directory):
+    # Iterate over each folder in the base directory
+    for folder_name in os.listdir(base_directory):
+        folder_path = os.path.join(base_directory, folder_name)
+        
+        # Check if the path is a directory
+        if os.path.isdir(folder_path):
+            print(f"Processing folder: {folder_name}")
+            # Calculate eta distance with time for the current folder
+            calculate_eta_distance_in_folder(folder_path)
+
+def calculate_eta_distance_in_folder(folder_path):
+    # Load the input_out.e file from the given folder path
+    input_out_path = os.path.join(folder_path, 'input_out.e')
+    
+    # Check if the input_out.e file exists
+    if not os.path.exists(input_out_path):
+        print(f"Error: input_out.e file not found in folder: {folder_path}")
+        return
+    
+    try:
+        # Load the input_out.e file as a ParaView source using IOSSReader
+        input_oute = IOSSReader(FileName=[input_out_path])
+        
+        # Create a new 'Contour' filter
+        contour = Contour(Input=input_oute)
+        contour.ContourBy = ['POINTS', 'eta']
+        contour.Isosurfaces = [0.01]  # Set the contour value for eta to define the profile 
+        contour.PointMergeMethod = 'Uniform Binning'
+
+        # Create a new 'Integrate Variables' filter
+        integrate_variables = IntegrateVariables(Input=contour)  #IntegrateVariables will get the x coordinates and then average them  
+        integrate_variables.DivideCellDataByVolume = 1  # Divide cell data by volume
+
+        # Define the output CSV path
+        output_csv_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
+
+        # Save the data to a CSV file
+        SaveData(output_csv_path, proxy=integrate_variables, WriteTimeSteps=1,
+                 ChooseArraysToWrite=1,
+                 PointDataArrays=['disp', 'eta', 'pot', 'w'],
+                 CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
+                                 'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+                                 'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
+                                 'sigma22_aux'],
+                 FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
+                 Precision=12,
+                 UseScientificNotation=1,
+                 AddTime=1)
+        
+        print(f"Data saved to: {output_csv_path}")
+    
+    except Exception as e:
+        print(f"Error processing folder {folder_path}: {e}")
 
 
 
