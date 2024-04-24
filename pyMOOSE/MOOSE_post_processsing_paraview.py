@@ -789,7 +789,9 @@ def calculate_eta_distance_in_folder(folder_path):
 
 
 
-def plot_points_vs_time(base_directory, folder_names=None):
+import numpy as np
+
+def plot_points_vs_time(base_directory, folder_names=None, order=5):
     if folder_names is None:
         folder_names = []
     
@@ -813,11 +815,11 @@ def plot_points_vs_time(base_directory, folder_names=None):
         # Concatenate data from all data frames
         combined_df = pd.concat(data_frames)
         
-        # Plot Points:0 vs Time
+        # Plot Points:0 vs Time without fitted line
         plt.figure(figsize=(7, 6))
         for folder_name, group_df in combined_df.groupby('Folder'):
             plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0'][group_df['Time'] <= 180],
-                     label=folder_name, marker='o',linestyle='-', linewidth=1)
+                     label=folder_name, marker=' ', linestyle='-', linewidth=1)
         
         plt.title('Points:0 vs Time for All Folders')
         plt.xlabel('Time', fontsize=22)
@@ -827,17 +829,59 @@ def plot_points_vs_time(base_directory, folder_names=None):
         plt.grid(False)
         plt.legend()
         
-        # Construct the plot file path with folder names
+        # Construct the plot file path without fitted line
         folder_name_str = '_'.join(folder_names)
-        plot_file_path = os.path.join(base_directory, f'points_vs_time_{folder_name_str}.png')
+        plot_file_path = os.path.join(base_directory, f'points_vs_time_{folder_name_str}_without_fit.png')
         
-        # Save the plot
+        # Save the plot without fitted line
         plt.savefig(plot_file_path, dpi=600)
         plt.close()
-               
-        print(f"Plot saved as: {plot_file_path}")
+        print(f"Plot without fitted line saved as: {plot_file_path}")
+        
+        # Plot Points:0 vs Time with fitted line
+        plt.figure(figsize=(7, 6))
+        for folder_name, group_df in combined_df.groupby('Folder'):
+            #plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0'][group_df['Time'] <= 180],
+                     #label=folder_name, marker=' ', linestyle='-', linewidth=1)
+            
+            # Fit polynomial regression line
+            x = group_df['Time'][group_df['Time'] <= 180]
+            y = group_df['Points:0'][group_df['Time'] <= 180]
+            z = np.polyfit(x, y, order)
+            p = np.poly1d(z)
+            plt.plot(x, p(x), linestyle='-', label=f'{folder_name} Fit', linewidth=1)
+        
+        plt.title('Points:0 vs Time for All Folders with Fitted Line')
+        plt.xlabel('Time', fontsize=22)
+        plt.ylabel('Points:0', fontsize=22)
+        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=18)
+        plt.grid(False)
+        plt.legend()
+        
+        # Construct the plot file path with fitted line
+        plot_file_path = os.path.join(base_directory, f'points_vs_time_{folder_name_str}_with_fit.png')
+        
+        # Save the plot with fitted line
+        plt.savefig(plot_file_path, dpi=600)
+        plt.close()
+        print(f"Plot with fitted line saved as: {plot_file_path}")
     else:
         print("No data found for plotting.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     # Get the directory of the currently executing script and then move up one level

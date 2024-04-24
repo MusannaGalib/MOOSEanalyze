@@ -91,17 +91,20 @@ def main():
     #plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
     #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
     #calculate_eta_distance_with_time(base_directory, folder_names=None)
-    #plot_points_vs_time(base_directory, folder_names=None)
+    #plot_points_vs_time(base_directory, folder_names=None, order=2)
 
 
-    folder_names = ['Bare_Zn', 'Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_i_5']
+    #folder_names = ['Bare_Zn', 'Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_i_5']
+    folder_names = ['Bare_Zn_anisotropy_0.000', 'Bare_Zn_anisotropy_0.2', 'Bare_Zn', 'Bare_Zn_anisotropy_0.4_1']
+    #folder_names = ['MLD_Alucone_eigen_0.5_Interface_.1GPa', 'MLD_Alucone_eigen_0.5_1', 'MLD_Alucone_eigen_0.5_Interface_2GPa']
+
     for specific_time in specific_times:
         #compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
        # compare_two_contour_plots(base_directory, specific_time, folder_names)
         #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
         #plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
         #calculate_eta_distance_with_time(base_directory, folder_names)
-        plot_points_vs_time(base_directory, folder_names)
+        plot_points_vs_time(base_directory, folder_names, order=5)
 
     # Or, call without specifying folder_names to auto-detect and process all folders
     #compare_folders_at_time(base_directory, specific_times, var_names)    
