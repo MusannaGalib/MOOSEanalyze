@@ -14,6 +14,7 @@ from paraview.simple import *
 from vtk.numpy_interface import dataset_adapter as dsa
 from vtk.util import numpy_support
 from vtk.util.numpy_support import vtk_to_numpy
+import seaborn as sns
 
 
 
@@ -39,7 +40,10 @@ try:
                          plot_variables_over_line_combined_with_contour,
                          compare_folders_at_time,
                          compare_two_contour_plots,
-                         plot_sigma22_aux_over_line_combined)
+                         plot_sigma22_aux_over_line_combined_top_bottom,
+                         plot_sigma22_aux_over_line_combined_left_right,
+                         calculate_eta_distance_with_time,
+                         plot_points_vs_time)
 
 except ModuleNotFoundError:
     print("Failed to import pyMOOSE. Ensure the package is correctly placed within the project.")
@@ -61,7 +65,7 @@ def main():
 
 
     # Specific times and variables might need to be adjusted based on your requirements
-    specific_times = [50.0, 150.0, 220.0]
+    specific_times = [50.0, 100.0, 150.0]
     var_names = ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']
 
     # Default specific times and variable names
@@ -83,18 +87,22 @@ def main():
     #plot_variables_across_timesteps(base_directory)
     #plot_variables_over_line_combined(base_directory, specific_times, var_names)
     #plot_variables_over_line_each_timestep_separately(base_directory, specific_times, var_names)
-    generate_and_save_contours(base_directory, specific_times)
+    #generate_and_save_contours(base_directory, specific_times)
     #plot_contours_from_csv(base_directory)
     #plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
-    #plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_names)
+    #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
+    #calculate_eta_distance_with_time(base_directory, folder_names=None)
+    #plot_points_vs_time(base_directory, folder_names=None)
 
 
-    folder_names = ['Bare_Zn_anisotropy_0.4_1', 'MLD_Alucone_eigen_0.5_anisotropy_0.4_1']
+    folder_names = ['Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_i_5']
     for specific_time in specific_times:
         compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
         compare_two_contour_plots(base_directory, specific_time, folder_names)
-        plot_sigma22_aux_over_line_combined(base_directory, specific_times, folder_names)
-
+        plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
+        plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
+        calculate_eta_distance_with_time(base_directory, folder_names)
+        plot_points_vs_time(base_directory, folder_names)
 
     # Or, call without specifying folder_names to auto-detect and process all folders
     #compare_folders_at_time(base_directory, specific_times, var_names)    

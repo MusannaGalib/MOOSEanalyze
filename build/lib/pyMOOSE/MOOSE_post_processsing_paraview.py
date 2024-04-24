@@ -3,10 +3,12 @@ import os
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import matplotlib.gridspec as gridspec
 from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
-import numpy as np
+import numpy as npl
+import seaborn as sns
 import re
 import csv
 import glob 
@@ -555,46 +557,273 @@ def compare_two_contour_plots(base_directory, specific_time, folder_names):
 
 
 
-def plot_variables_over_line_paper_format(base_directory, specific_times, var_names):
-    for root, dirs, files in os.walk(base_directory):
-        if "input_out.e" in files:
-            input_file_path = os.path.join(root, "input_out.e")
-            print(f"Processing file: {input_file_path}")
 
-            # Initialize the figure with one subplot
-            fig, ax = plt.subplots(figsize=(8, 6))
 
-            # Plot the contour
-            plot_contours_from_csv_rotated(root, ax)
 
-            # Now plot sigma22_aux along the line
-            csv_file = os.path.join(root, "sigma22_aux_contour.csv")
-            if os.path.exists(csv_file):
-                plot_variables_along_line_paper_format(csv_file, ax)
 
-            # Add labels and legend
-            ax.set_xlabel('Distance along line', fontsize=14)
-            ax.set_ylabel('sigma22_aux', fontsize=14)
-            ax.legend()
 
-            # Save the figure
-            output_plot_path = os.path.join(root, "sigma22_aux_over_line.png")
-            plt.savefig(output_plot_path)
-            plt.close(fig)
-            print(f"Saved: {output_plot_path}")
 
-def plot_variables_along_line_paper_format(csv_file, ax):
-    data = pd.read_csv(csv_file)
-    ax.plot(data['Distance along line'], data['sigma22_aux'], label='sigma22_aux')
-    ax.set_ylim(0, 200)
-    ax.legend(loc='upper right', fontsize=12)
-    ax.set_xlabel('Distance along line', fontsize=14)
+
+
+def plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names, output_directory=None):
+    if len(folder_names) < 2:
+        print("Need at least two folder names to compare.")
+        return
+    
+    if output_directory is None:
+        output_directory = base_directory
+    
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(4, 5), sharex=True)
+
+    for i, folder_name in enumerate(folder_names[:2]):
+        folder_path = os.path.join(base_directory, folder_name)
+        
+        if not os.path.exists(folder_path):
+            print(f"Folder does not exist: {folder_path}. Skipping...")
+            continue
+        
+        print(f"Processing folder: {folder_name}")
+        is_top_plot = folder_name.startswith("Bare_Zn")  # Check if it's a top plot
+        plot_sigma22_aux_from_folder_top_bottom(folder_path, specific_times, (ax1 if i == 0 else ax2), is_top_plot, ax2)
+
+    ax2.set_xlabel('x (${\mu m}$)', fontsize=16)  # Increase font size
+
+    plt.tight_layout(pad=0)
+    
+    # Save the figure as PNG with increased quality and folder names in the file name
+    output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_top_bottom_{folder_names[0]}_{folder_names[1]}.png")
+    plt.savefig(output_plot_path, format='png', bbox_inches='tight', dpi=600)
+    plt.close(fig)
+    print(f"Saved: {output_plot_path}")
+
+
+def plot_sigma22_aux_from_folder_top_bottom(folder_path, specific_times, ax, is_top_plot, ax2):
+    var_name = 'sigma22_aux'
+    for file in os.listdir(folder_path):
+        if file.endswith("input_out.e"):
+            input_file_path = os.path.join(folder_path, file)
+            input_oute = IOSSReader(FileName=[input_file_path])
+            input_oute.UpdatePipeline()
+
+            # Collect data for each time step
+            for time_value in specific_times:
+                plotOverLine, _, _ = setup_plot_over_line(input_oute, time_value)
+                arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
+                if is_top_plot:
+                    var_data *= 1e6  # Multiply by 10^6 to convert from GPa to kPa for top plot
+                ax.plot(arc_length, var_data, label=f"{time_value} sec")
+
+    if is_top_plot:
+        #ax.set_ylabel(f'{var_name} (Kpa)', fontsize=16)  # Increase font size and add unit for top plot
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$ (KPa)', fontsize=22)
+    else:
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$  (GPa)', fontsize=22)  # Increase font size and add unit for bottom plot
+    
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.1f}'))  # Set significant decimal digits
     ax.grid(False)
-    ax.tick_params(labelsize=12)
+    ax.tick_params(labelsize=22)
+      
+    if is_top_plot:
+        ax.legend(loc='upper right', fontsize=11)
+    else:
+        ax.legend(loc='lower right', fontsize=11)
+      
+    if ax is not ax2:
+        ax.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)  # Remove ticks and labels on the x-axis
+
+    ax.yaxis.set_label_position("right")
+    ax.yaxis.tick_right()    
 
 
 
 
+
+
+
+
+
+def plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names, output_directory=None):
+    if len(folder_names) < 2:
+        print("Need at least two folder names to compare.")
+        return
+    
+    if output_directory is None:
+        output_directory = base_directory
+    
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7, 3), sharey=False, sharex=True, gridspec_kw={'wspace': 0})
+
+    for i, folder_name in enumerate(folder_names[:2]):
+        folder_path = os.path.join(base_directory, folder_name)
+        
+        if not os.path.exists(folder_path):
+            print(f"Folder does not exist: {folder_path}. Skipping...")
+            continue
+        
+        print(f"Processing folder: {folder_name}")
+        is_top_plot = folder_name.startswith("Bare_Zn")  # Check if it's a top plot
+        plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, (ax1 if i == 0 else ax2), is_top_plot)
+
+    ax1.set_xlabel('x (${\mu m}$)', fontsize=22)
+    ax2.set_xlabel('x (${\mu m}$)', fontsize=22)
+
+
+
+
+    plt.tight_layout(pad=0)
+    
+    output_plot_path = os.path.join(output_directory, f"sigma22_aux_comparison_Left_right_{folder_names[0]}_{folder_names[1]}.png")
+    plt.savefig(output_plot_path, format='png', bbox_inches='tight', dpi=600)
+    plt.close(fig)
+    print(f"Saved: {output_plot_path}")
+
+
+def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_top_plot):
+    var_name = 'sigma22_aux'
+    for file in os.listdir(folder_path):
+        if file.endswith("input_out.e"):
+            input_file_path = os.path.join(folder_path, file)
+            input_oute = IOSSReader(FileName=[input_file_path])
+            input_oute.UpdatePipeline()
+
+            for time_value in specific_times:
+                plotOverLine, _, _ = setup_plot_over_line(input_oute, time_value)
+                arc_length, var_data = fetch_plot_data(plotOverLine, var_name)
+                if is_top_plot:
+                    var_data *= 1e6
+                ax.plot(arc_length, var_data, label=f"{time_value} sec")
+
+    if is_top_plot:
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$ (kPa)', fontsize=22)
+        #ax.legend(loc='upper right', fontsize=15)
+    else:
+        ax.set_ylabel(f'${{\sigma}}_{{22}}$  (GPa)', fontsize=22)
+        #ax.legend(loc='lower right', fontsize=15)
+    
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.1f}'))
+    ax.grid(False)
+    ax.tick_params(labelsize=20)
+    
+    if not is_top_plot:  # Move y-axis ticks and labels to the right for the right plot
+        ax.yaxis.set_label_position("right")
+        ax.yaxis.tick_right()
+    
+    if not is_top_plot:  # Move y-axis ticks and labels to the right for the bottom plot
+        ax.yaxis.set_label_position("right")
+        ax.yaxis.tick_right()
+        ax.set_yticks(ax.get_yticks()[1:])  # Hide the first tick label
+        
+        # Extend the x-axis limits slightly to avoid overlap with the right plot
+        xlim = ax.get_xlim()
+        ax.set_xlim(xlim[0], xlim[1] + 0.09 * (xlim[1] - xlim[0]))    
+
+
+
+def calculate_eta_distance_with_time(base_directory, folder_names=None):
+    if folder_names is None:
+        folder_names = []
+    
+    if folder_names:
+        # Iterate over each specified folder in folder_names
+        for folder_name in folder_names:
+            folder_path = os.path.join(base_directory, folder_name)
+            if os.path.exists(folder_path):
+                print(f"Processing folder: {folder_name}")
+                calculate_eta_distance_in_folder(folder_path)
+            else:
+                print(f"Folder not found: {folder_name}")
+    else:
+        # Iterate over each folder in the base directory
+        for folder_name in os.listdir(base_directory):
+            folder_path = os.path.join(base_directory, folder_name)
+            if os.path.isdir(folder_path):
+                print(f"Processing folder: {folder_name}")
+                calculate_eta_distance_in_folder(folder_path)
+
+def calculate_eta_distance_in_folder(folder_path):
+    # Load the input_out.e file from the given folder path
+    input_out_path = os.path.join(folder_path, 'input_out.e')
+    
+    # Check if the input_out.e file exists
+    if not os.path.exists(input_out_path):
+        print(f"Error: input_out.e file not found in folder: {folder_path}")
+        return
+    
+    try:
+        # Load the input_out.e file as a ParaView source using IOSSReader
+        input_oute = IOSSReader(FileName=[input_out_path])
+        
+        # Create a new 'Contour' filter
+        contour = Contour(Input=input_oute)
+        contour.ContourBy = ['POINTS', 'eta']
+        contour.Isosurfaces = [0.01]  # Set the contour value for eta to define the profile 
+        contour.PointMergeMethod = 'Uniform Binning'
+
+        # Create a new 'Integrate Variables' filter
+        integrate_variables = IntegrateVariables(Input=contour)  #IntegrateVariables will get the x coordinates and then average them  
+        integrate_variables.DivideCellDataByVolume = 1  # Divide cell data by volume
+
+        # Define the output CSV path
+        output_csv_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
+
+        # Save the data to a CSV file
+        SaveData(output_csv_path, proxy=integrate_variables, WriteTimeSteps=1,
+                 ChooseArraysToWrite=1,
+                 PointDataArrays=['disp', 'eta', 'pot', 'w'],
+                 CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
+                                 'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+                                 'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
+                                 'sigma22_aux'],
+                 FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
+                 Precision=12,
+                 UseScientificNotation=1,
+                 AddTime=1)
+        
+        print(f"Data saved to: {output_csv_path}")
+    
+    except Exception as e:
+        print(f"Error processing folder {folder_path}: {e}")
+
+def plot_points_vs_time(base_directory, folder_names=None):
+    if folder_names is None:
+        folder_names = []
+    
+    data_frames = []  # To store data from all CSV files
+    
+    for folder_name in folder_names:
+        folder_path = os.path.join(base_directory, folder_name)
+        if os.path.exists(folder_path):
+            csv_file_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
+            if os.path.exists(csv_file_path):
+                print(f"Reading CSV file for folder: {folder_name}")
+                df = pd.read_csv(csv_file_path)
+                df['Folder'] = folder_name  # Add a column to identify the folder
+                data_frames.append(df)
+            else:
+                print(f"CSV file not found in folder: {folder_name}")
+        else:
+            print(f"Folder not found: {folder_name}")
+    
+    if data_frames:
+        # Concatenate data from all data frames
+        combined_df = pd.concat(data_frames)
+        
+        # Plot Points:0 vs Time
+        plt.figure(figsize=(12, 8))
+        sns.lineplot(data=combined_df, x='Time', y='Points:0', hue='Folder', marker='o', linestyle='-')
+        plt.title('Points:0 vs Time for All Folders')
+        plt.xlabel('Time', fontsize=22)
+        plt.ylabel('Points:0', fontsize=22)
+        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=18)
+        plt.grid(True)
+        
+        # Save the plot
+        plot_file_path = os.path.join(base_directory, 'points_vs_time_all_folders.png')
+        plt.savefig(plot_file_path, dpi=600)
+        plt.close()
+        print(f"Plot saved as: {plot_file_path}")
+    else:
+        print("No data found for plotting.")
 
 
 if __name__ == "__main__":

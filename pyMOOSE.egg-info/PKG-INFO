@@ -2,13 +2,13 @@ Metadata-Version: 2.1
 Name: pyMOOSE
 Version: 0.1
 Summary: 'A Python package for post-processing MOOSE data
-Home-page: http://example.com/HelloWorld/
+Home-page: https://github.com/MusannaGalib/pyMOOSE/
 Author: Musanna Galib
 Author-email: galibubc@student.ubc.ca
 License: MIT
 Keywords: MOOSE post-processing using Pvpython-paraview
 Platform: UNKNOWN
-Requires-Python: >=3.6
+Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE
 

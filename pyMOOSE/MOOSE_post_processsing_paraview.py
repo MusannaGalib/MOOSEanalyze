@@ -786,37 +786,45 @@ def plot_points_vs_time(base_directory, folder_names=None):
     if folder_names is None:
         folder_names = []
     
-    if folder_names:
-        for folder_name in folder_names:
-            folder_path = os.path.join(base_directory, folder_name)
-            if os.path.exists(folder_path):
-                csv_file_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
-                if os.path.exists(csv_file_path):
-                    print(f"Plotting Points:0 vs Time for folder: {folder_name}")
-                    plot_points_vs_time_for_csv(csv_file_path)
-                else:
-                    print(f"CSV file not found in folder: {folder_name}")
+    data_frames = []  # To store data from all CSV files
+    
+    for folder_name in folder_names:
+        folder_path = os.path.join(base_directory, folder_name)
+        if os.path.exists(folder_path):
+            csv_file_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
+            if os.path.exists(csv_file_path):
+                print(f"Reading CSV file for folder: {folder_name}")
+                df = pd.read_csv(csv_file_path)
+                df['Folder'] = folder_name  # Add a column to identify the folder
+                data_frames.append(df)
             else:
-                print(f"Folder not found: {folder_name}")
+                print(f"CSV file not found in folder: {folder_name}")
+        else:
+            print(f"Folder not found: {folder_name}")
+    
+    if data_frames:
+        # Concatenate data from all data frames
+        combined_df = pd.concat(data_frames)
+        
+        # Plot Points:0 vs Time
+        plt.figure(figsize=(12, 8))
+        for folder_name, group_df in combined_df.groupby('Folder'):
+            plt.plot(group_df['Time'], group_df['Points:0'], label=folder_name, marker='o')
+        plt.title('Points:0 vs Time for All Folders')
+        plt.xlabel('Time', fontsize=22)
+        plt.ylabel('Points:0', fontsize=22)
+        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=18)
+        plt.grid(True)
+        plt.legend()
+        
+        # Save the plot
+        plot_file_path = os.path.join(base_directory, 'points_vs_time_all_folders.png')
+        plt.savefig(plot_file_path, dpi=600)
+        plt.close()
+        print(f"Plot saved as: {plot_file_path}")
     else:
-        print("No folder names provided.")
-
-def plot_points_vs_time_for_csv(csv_file_path):
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(csv_file_path)
-    
-    # Extract Time and Points:0 columns
-    time = df['Time']
-    points_0 = df['Points:0']
-    
-    # Plot Points:0 vs Time
-    plt.figure(figsize=(10, 6))
-    plt.plot(time, points_0, marker='o', linestyle='-')
-    plt.title('Points:0 vs Time')
-    plt.xlabel('Time')
-    plt.ylabel('Points:0')
-    plt.grid(True)
-    plt.show()
+        print("No data found for plotting.")
 
 
 if __name__ == "__main__":

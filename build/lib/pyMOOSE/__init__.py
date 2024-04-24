@@ -1,4 +1,5 @@
-# Assuming the module name is MOOSE_post_processsing_paraview.py and it's in the same package directory
+# module name: MOOSE_post_processsing_paraview.py 
+# it's in the same package directory
 
 from .MOOSE_post_processsing_paraview import (
     find_and_process_files,
@@ -10,7 +11,10 @@ from .MOOSE_post_processsing_paraview import (
     plot_variables_over_line_combined_with_contour,
     compare_folders_at_time,
     compare_two_contour_plots,
-    plot_sigma22_aux_over_line_combined
+    plot_sigma22_aux_over_line_combined_top_bottom,
+    plot_sigma22_aux_over_line_combined_left_right,
+    calculate_eta_distance_with_time,
+    plot_points_vs_time
 )
 
 __all__ = [
@@ -23,4 +27,7 @@ __all__ = [
     "plot_variables_over_line_combined_with_contour",
     "compare_folders_at_time",
     "compare_two_contour_plots",
-    "plot_sigma22_aux_over_line_combined"]
+    "plot_sigma22_aux_over_line_combined_top_bottom",
+    "plot_sigma22_aux_over_line_combined_left_right",
+    "calculate_eta_distance_with_time",
+    "plot_points_vs_time"]

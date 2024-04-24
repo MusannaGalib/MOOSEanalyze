@@ -94,7 +94,7 @@ def main():
     #plot_points_vs_time(base_directory, folder_names=None)
 
 
-    folder_names = ['Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_i_5']
+    folder_names = ['Bare_Zn', 'Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_i_5']
     for specific_time in specific_times:
         compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
         compare_two_contour_plots(base_directory, specific_time, folder_names)
