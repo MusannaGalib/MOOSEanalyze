@@ -717,16 +717,26 @@ def plot_sigma22_aux_from_folder_left_right(folder_path, specific_times, ax, is_
 
 
 
-def calculate_eta_distance_with_time(base_directory):
-    # Iterate over each folder in the base directory
-    for folder_name in os.listdir(base_directory):
-        folder_path = os.path.join(base_directory, folder_name)
-        
-        # Check if the path is a directory
-        if os.path.isdir(folder_path):
-            print(f"Processing folder: {folder_name}")
-            # Calculate eta distance with time for the current folder
-            calculate_eta_distance_in_folder(folder_path)
+def calculate_eta_distance_with_time(base_directory, folder_names=None):
+    if folder_names is None:
+        folder_names = []
+    
+    if folder_names:
+        # Iterate over each specified folder in folder_names
+        for folder_name in folder_names:
+            folder_path = os.path.join(base_directory, folder_name)
+            if os.path.exists(folder_path):
+                print(f"Processing folder: {folder_name}")
+                calculate_eta_distance_in_folder(folder_path)
+            else:
+                print(f"Folder not found: {folder_name}")
+    else:
+        # Iterate over each folder in the base directory
+        for folder_name in os.listdir(base_directory):
+            folder_path = os.path.join(base_directory, folder_name)
+            if os.path.isdir(folder_path):
+                print(f"Processing folder: {folder_name}")
+                calculate_eta_distance_in_folder(folder_path)
 
 def calculate_eta_distance_in_folder(folder_path):
     # Load the input_out.e file from the given folder path
