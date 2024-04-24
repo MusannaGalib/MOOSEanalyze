@@ -809,7 +809,9 @@ def plot_points_vs_time(base_directory, folder_names=None):
         # Plot Points:0 vs Time
         plt.figure(figsize=(12, 8))
         for folder_name, group_df in combined_df.groupby('Folder'):
-            plt.plot(group_df['Time'], group_df['Points:0'], label=folder_name, marker='o')
+            plt.plot(group_df['Time'][group_df['Time'] <= 200], group_df['Points:0'][group_df['Time'] <= 200],
+                     label=folder_name, marker='o', linewidth=2)
+        
         plt.title('Points:0 vs Time for All Folders')
         plt.xlabel('Time', fontsize=22)
         plt.ylabel('Points:0', fontsize=22)
@@ -825,7 +827,6 @@ def plot_points_vs_time(base_directory, folder_names=None):
         print(f"Plot saved as: {plot_file_path}")
     else:
         print("No data found for plotting.")
-
 
 if __name__ == "__main__":
     # Get the directory of the currently executing script and then move up one level

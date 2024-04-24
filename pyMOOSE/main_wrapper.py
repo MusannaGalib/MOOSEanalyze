@@ -96,11 +96,11 @@ def main():
 
     folder_names = ['Bare_Zn', 'Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_i_5']
     for specific_time in specific_times:
-        compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
-        compare_two_contour_plots(base_directory, specific_time, folder_names)
-        plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
-        plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
-        calculate_eta_distance_with_time(base_directory, folder_names)
+        #compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
+       # compare_two_contour_plots(base_directory, specific_time, folder_names)
+        #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
+        #plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
+        #calculate_eta_distance_with_time(base_directory, folder_names)
         plot_points_vs_time(base_directory, folder_names)
 
     # Or, call without specifying folder_names to auto-detect and process all folders
