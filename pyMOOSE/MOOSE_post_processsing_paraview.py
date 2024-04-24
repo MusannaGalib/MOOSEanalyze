@@ -782,7 +782,41 @@ def calculate_eta_distance_in_folder(folder_path):
     except Exception as e:
         print(f"Error processing folder {folder_path}: {e}")
 
+def plot_points_vs_time(base_directory, folder_names=None):
+    if folder_names is None:
+        folder_names = []
+    
+    if folder_names:
+        for folder_name in folder_names:
+            folder_path = os.path.join(base_directory, folder_name)
+            if os.path.exists(folder_path):
+                csv_file_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
+                if os.path.exists(csv_file_path):
+                    print(f"Plotting Points:0 vs Time for folder: {folder_name}")
+                    plot_points_vs_time_for_csv(csv_file_path)
+                else:
+                    print(f"CSV file not found in folder: {folder_name}")
+            else:
+                print(f"Folder not found: {folder_name}")
+    else:
+        print("No folder names provided.")
 
+def plot_points_vs_time_for_csv(csv_file_path):
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(csv_file_path)
+    
+    # Extract Time and Points:0 columns
+    time = df['Time']
+    points_0 = df['Points:0']
+    
+    # Plot Points:0 vs Time
+    plt.figure(figsize=(10, 6))
+    plt.plot(time, points_0, marker='o', linestyle='-')
+    plt.title('Points:0 vs Time')
+    plt.xlabel('Time')
+    plt.ylabel('Points:0')
+    plt.grid(True)
+    plt.show()
 
 
 if __name__ == "__main__":
