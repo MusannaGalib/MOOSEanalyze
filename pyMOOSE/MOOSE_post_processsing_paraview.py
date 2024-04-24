@@ -782,6 +782,13 @@ def calculate_eta_distance_in_folder(folder_path):
     except Exception as e:
         print(f"Error processing folder {folder_path}: {e}")
 
+
+
+
+
+
+
+
 def plot_points_vs_time(base_directory, folder_names=None):
     if folder_names is None:
         folder_names = []
@@ -807,23 +814,27 @@ def plot_points_vs_time(base_directory, folder_names=None):
         combined_df = pd.concat(data_frames)
         
         # Plot Points:0 vs Time
-        plt.figure(figsize=(12, 8))
+        plt.figure(figsize=(7, 6))
         for folder_name, group_df in combined_df.groupby('Folder'):
-            plt.plot(group_df['Time'][group_df['Time'] <= 200], group_df['Points:0'][group_df['Time'] <= 200],
-                     label=folder_name, marker='o', linewidth=2)
+            plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0'][group_df['Time'] <= 180],
+                     label=folder_name, marker='o',linestyle='-', linewidth=1)
         
         plt.title('Points:0 vs Time for All Folders')
         plt.xlabel('Time', fontsize=22)
         plt.ylabel('Points:0', fontsize=22)
         plt.xticks(fontsize=18)
         plt.yticks(fontsize=18)
-        plt.grid(True)
+        plt.grid(False)
         plt.legend()
         
+        # Construct the plot file path with folder names
+        folder_name_str = '_'.join(folder_names)
+        plot_file_path = os.path.join(base_directory, f'points_vs_time_{folder_name_str}.png')
+        
         # Save the plot
-        plot_file_path = os.path.join(base_directory, 'points_vs_time_all_folders.png')
         plt.savefig(plot_file_path, dpi=600)
         plt.close()
+               
         print(f"Plot saved as: {plot_file_path}")
     else:
         print("No data found for plotting.")
