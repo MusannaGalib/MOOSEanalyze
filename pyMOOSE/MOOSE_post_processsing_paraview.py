@@ -789,7 +789,6 @@ def calculate_eta_distance_in_folder(folder_path):
 
 
 
-import numpy as np
 
 def plot_points_vs_time(base_directory, folder_names=None, order=5):
     if folder_names is None:
@@ -816,14 +815,14 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         combined_df = pd.concat(data_frames)
         
         # Plot Points:0 vs Time without fitted line
-        plt.figure(figsize=(7, 6))
+        plt.figure(figsize=(8, 6))
         for folder_name, group_df in combined_df.groupby('Folder'):
-            plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0'][group_df['Time'] <= 180],
+            plt.plot(group_df['Time'][group_df['Time'] <= 200], group_df['Points:0'][group_df['Time'] <= 200],
                      label=folder_name, marker=' ', linestyle='-', linewidth=1)
         
-        plt.title('Points:0 vs Time for All Folders')
+        #plt.title('Points:0 vs Time for All Folders')
         plt.xlabel('Time', fontsize=22)
-        plt.ylabel('Points:0', fontsize=22)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=22)
         plt.xticks(fontsize=18)
         plt.yticks(fontsize=18)
         plt.grid(False)
@@ -839,21 +838,21 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         print(f"Plot without fitted line saved as: {plot_file_path}")
         
         # Plot Points:0 vs Time with fitted line
-        plt.figure(figsize=(7, 6))
+        plt.figure(figsize=(8, 6))
         for folder_name, group_df in combined_df.groupby('Folder'):
             #plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0'][group_df['Time'] <= 180],
                      #label=folder_name, marker=' ', linestyle='-', linewidth=1)
             
             # Fit polynomial regression line
-            x = group_df['Time'][group_df['Time'] <= 180]
-            y = group_df['Points:0'][group_df['Time'] <= 180]
+            x = group_df['Time'][group_df['Time'] <= 200]
+            y = group_df['Points:0'][group_df['Time'] <= 200]
             z = np.polyfit(x, y, order)
             p = np.poly1d(z)
             plt.plot(x, p(x), linestyle='-', label=f'{folder_name} Fit', linewidth=1)
         
-        plt.title('Points:0 vs Time for All Folders with Fitted Line')
+        #plt.title('Points:0 vs Time for All Folders with Fitted Line')
         plt.xlabel('Time', fontsize=22)
-        plt.ylabel('Points:0', fontsize=22)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=22)
         plt.xticks(fontsize=18)
         plt.yticks(fontsize=18)
         plt.grid(False)
