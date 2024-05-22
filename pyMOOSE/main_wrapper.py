@@ -64,7 +64,7 @@ def main():
 
 
     # Specific times and variables might need to be adjusted based on your requirements
-    specific_times = [50.0, 100.0, 150.0]
+    specific_times = [60.0, 120.0, 180.0]
     var_names = ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']
 
     # Default specific times and variable names
@@ -94,8 +94,10 @@ def main():
     #plot_points_vs_time(base_directory, folder_names=None, order=2)
 
 
-    folder_names = ['Bare_Zn', 'Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_1', 'MLD_Alucone_eigen_0.5_i_5']
-    #folder_names = ['Bare_Zn_anisotropy_0.000', 'Bare_Zn_anisotropy_0.2', 'Bare_Zn', 'Bare_Zn_anisotropy_0.4_1']
+    #folder_names = ['Bare_Zn','MLD_Alucone_eigen_0.5_1']
+
+    #folder_names = ['Bare_Zn', 'Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_1', 'MLD_Alucone_eigen_0.5_i_5']
+    folder_names = ['Bare_Zn_anisotropy_0.000', 'Bare_Zn', 'Bare_Zn_anisotropy_0.2',  'Bare_Zn_anisotropy_0.4_1']
     #folder_names = ['MLD_Alucone_eigen_0.5_Interface_.1GPa', 'MLD_Alucone_eigen_0.5_Interface_.5GPa', 'MLD_Alucone_eigen_0.5_1']
 
     for specific_time in specific_times:
@@ -103,7 +105,7 @@ def main():
        # compare_two_contour_plots(base_directory, specific_time, folder_names)
         #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
         #plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
-        calculate_eta_distance_with_time(base_directory, folder_names)
+        #calculate_eta_distance_with_time(base_directory, folder_names)
         plot_points_vs_time(base_directory, folder_names, order=5)
 
     # Or, call without specifying folder_names to auto-detect and process all folders

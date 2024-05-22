@@ -143,8 +143,8 @@ def setup_plot_over_line(input_oute, time_value):
     along with the start and end points of the line.
     """
     # Define start and end points of the line
-    point1 = [0.0, 100.0, 0.0]
-    point2 = [199.99999862765003, 100.0, 0.0]
+    point1 = [0.0, 120.0, 0.0]
+    point2 = [199.99999862765003, 120.0, 0.0]
 
     # Create the PlotOverLine filter with the input data
     plotOverLine = PlotOverLine(Input=input_oute,
@@ -572,7 +572,7 @@ def plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_time
     if output_directory is None:
         output_directory = base_directory
     
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(4, 5), sharex=True)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(5, 6), sharex=True)
 
     for i, folder_name in enumerate(folder_names[:2]):
         folder_path = os.path.join(base_directory, folder_name)
@@ -838,7 +838,7 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         print(f"Plot without fitted line saved as: {plot_file_path}")
         
         # Plot Points:0 vs Time with fitted line
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(5, 4))
         for folder_name, group_df in combined_df.groupby('Folder'):
             #plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0'][group_df['Time'] <= 180],
                      #label=folder_name, marker=' ', linestyle='-', linewidth=1)
@@ -853,10 +853,14 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         #plt.title('Points:0 vs Time for All Folders with Fitted Line')
         plt.xlabel('Time', fontsize=22)
         plt.ylabel('Dendrite Length ($\mu m$)', fontsize=22)
-        plt.xticks(fontsize=18)
-        plt.yticks(fontsize=18)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
         plt.grid(False)
         plt.legend()
+
+        # Use tight_layout to fit the plot within the figure size
+        plt.tight_layout()
+
         
         # Construct the plot file path with fitted line
         plot_file_path = os.path.join(base_directory, f'points_vs_time_{folder_name_str}_with_fit.png')
