@@ -863,7 +863,7 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
             z = np.polyfit(x, y, order)
             p = np.poly1d(z)
             #plt.plot(x, p(x), linestyle='-', label=f'{folder_name} Fit', linewidth=1)
-            plt.plot(x, p(x), linestyle=linestyle, label=f'{label_prefix} aniso {aniso_value}', linewidth=1)
+            plt.plot(x, p(x), linestyle=linestyle, label=f'{label_prefix} $\delta$ {aniso_value}', linewidth=1)
         
         #plt.title('Points:0 vs Time for All Folders with Fitted Line')
         plt.xlabel('Time', fontsize=20)
