@@ -858,18 +858,18 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
                 label_prefix = folder_name  # Fallback to the folder name
 
             # Fit polynomial regression line
-            x = group_df['Time'][group_df['Time'] <= 200]
-            y = group_df['Points:0'][group_df['Time'] <= 200]
+            x = group_df['Time'][group_df['Time'] <= 220]
+            y = group_df['Points:0'][group_df['Time'] <= 220]
             z = np.polyfit(x, y, order)
             p = np.poly1d(z)
             #plt.plot(x, p(x), linestyle='-', label=f'{folder_name} Fit', linewidth=1)
             plt.plot(x, p(x), linestyle=linestyle, label=f'{label_prefix} aniso {aniso_value}', linewidth=1)
         
         #plt.title('Points:0 vs Time for All Folders with Fitted Line')
-        plt.xlabel('Time', fontsize=22)
-        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=22)
-        plt.xticks(fontsize=20)
-        plt.yticks(fontsize=20)
+        plt.xlabel('Time', fontsize=20)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=20)
+        plt.xticks(fontsize=19)
+        plt.yticks(fontsize=19)
         plt.grid(False)
         plt.legend()
 
