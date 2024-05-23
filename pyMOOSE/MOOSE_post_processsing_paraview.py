@@ -843,12 +843,27 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
             #plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0'][group_df['Time'] <= 180],
                      #label=folder_name, marker=' ', linestyle='-', linewidth=1)
             
+            # Extract the part after 'aniso' for the legend
+            aniso_value = folder_name.split('aniso')[-1].strip()
+            
+            # Determine linestyle based on the folder type
+            if 'Bare Zn' in folder_name:
+                linestyle = '-'
+                label_prefix = 'Bare Zn'
+            elif 'MLD' in folder_name:
+                linestyle = '--'
+                label_prefix = 'MLD'
+            else:
+                linestyle = '-'
+                label_prefix = folder_name  # Fallback to the folder name
+
             # Fit polynomial regression line
             x = group_df['Time'][group_df['Time'] <= 200]
             y = group_df['Points:0'][group_df['Time'] <= 200]
             z = np.polyfit(x, y, order)
             p = np.poly1d(z)
-            plt.plot(x, p(x), linestyle='-', label=f'{folder_name} Fit', linewidth=1)
+            #plt.plot(x, p(x), linestyle='-', label=f'{folder_name} Fit', linewidth=1)
+            plt.plot(x, p(x), linestyle=linestyle, label=f'{label_prefix} aniso {aniso_value}', linewidth=1)
         
         #plt.title('Points:0 vs Time for All Folders with Fitted Line')
         plt.xlabel('Time', fontsize=22)
@@ -859,6 +874,7 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         plt.legend()
 
         # Use tight_layout to fit the plot within the figure size
+        legend = plt.legend(frameon=False)  # Remove the border
         plt.tight_layout()
 
         
