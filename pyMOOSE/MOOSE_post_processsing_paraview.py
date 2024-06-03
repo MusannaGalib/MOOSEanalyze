@@ -866,10 +866,10 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
             plt.plot(x, p(x), linestyle=linestyle, label=f'{label_prefix} $\delta$ {aniso_value}', linewidth=1)
         
         #plt.title('Points:0 vs Time for All Folders with Fitted Line')
-        plt.xlabel('Time', fontsize=20)
-        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=20)
-        plt.xticks(fontsize=19)
-        plt.yticks(fontsize=19)
+        plt.xlabel('Time', fontsize=18)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=18)
+        plt.xticks(fontsize=16)
+        plt.yticks(fontsize=16)
         plt.grid(False)
         plt.legend()
 
@@ -882,7 +882,7 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         plot_file_path = os.path.join(base_directory, f'points_vs_time_{folder_name_str}_with_fit.png')
         
         # Save the plot with fitted line
-        plt.savefig(plot_file_path, dpi=600)
+        plt.savefig(plot_file_path, dpi=1200)
         plt.close()
         print(f"Plot with fitted line saved as: {plot_file_path}")
     else:
