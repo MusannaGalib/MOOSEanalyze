@@ -838,7 +838,7 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         print(f"Plot without fitted line saved as: {plot_file_path}")
         
         # Plot Points:0 vs Time with fitted line
-        plt.figure(figsize=(5, 4))
+        plt.figure(figsize=(4, 3.5))
         for folder_name, group_df in combined_df.groupby('Folder'):
             #plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0'][group_df['Time'] <= 180],
                      #label=folder_name, marker=' ', linestyle='-', linewidth=1)
@@ -866,12 +866,12 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
             plt.plot(x, p(x), linestyle=linestyle, label=f'{label_prefix} $\delta$ {aniso_value}', linewidth=1)
         
         #plt.title('Points:0 vs Time for All Folders with Fitted Line')
-        plt.xlabel('Time', fontsize=18)
-        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=18)
-        plt.xticks(fontsize=16)
-        plt.yticks(fontsize=16)
+        plt.xlabel('Time', fontsize=16)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=16)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
         plt.grid(False)
-        plt.legend()
+        plt.legend(fontsize=14)  # Add the fontsize parameter to the legend function
 
         # Use tight_layout to fit the plot within the figure size
         legend = plt.legend(frameon=False)  # Remove the border
