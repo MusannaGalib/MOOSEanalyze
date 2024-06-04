@@ -94,11 +94,13 @@ def main():
     #plot_points_vs_time(base_directory, folder_names=None, order=2)
 
 
-    #folder_names = ['Bare_Zn','MLD_Alucone_eigen_0.5_1']
+    folder_names = ['Bare Zn i 1.5','Bare Zn i 2.8','Bare Zn i 5.0','MLD_Alucone eigen 0.5 i 1.5','MLD Alucone eigen 0.5 i 2.8','MLD Alucone eigen 0.5 i 5']
+
+    #folder_names = [ 'Bare Zn aniso 0.00', 'Bare Zn aniso 0.04', 'Bare Zn aniso 0.2', 'Bare Zn aniso 0.4', 'MLD eigen 0.5 aniso 0.00', 'MLD eigen 0.5 aniso 0.2',
+    #                 'MLD eigen 0.5 aniso 0.04', 'MLD eigen 0.5 aniso 0.4']
+    
 
     #folder_names = ['Bare_Zn', 'Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_1', 'MLD_Alucone_eigen_0.5_i_5']
-    folder_names = [ 'Bare Zn aniso 0.00', 'Bare Zn aniso 0.04', 'Bare Zn aniso 0.2', 'Bare Zn aniso 0.4', 'MLD eigen 0.5 aniso 0.00', 'MLD eigen 0.5 aniso 0.2',
-                     'MLD eigen 0.5 aniso 0.04', 'MLD eigen 0.5 aniso 0.4']
     #folder_names = ['Bare_Zn_anisotropy_0.000', 'Bare_Zn', 'Bare_Zn_anisotropy_0.2',  'Bare_Zn_anisotropy_0.4_1', 'MLD_Alucone_eigen_0.5_anisotropy_0.000', 'MLD_Alucone_eigen_0.5_1','MLD_Alucone_eigen_0.5_anisotropy_0.2','MLD_Alucone_eigen_0.5_anisotropy_0.4_1']
     #folder_names = ['MLD_Alucone_eigen_0.5_Interface_.1GPa', 'MLD_Alucone_eigen_0.5_Interface_.5GPa', 'MLD_Alucone_eigen_0.5_1']
 
