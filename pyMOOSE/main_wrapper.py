@@ -95,7 +95,8 @@ def main():
 
 
     #folder_names = ['Bare Zn i 1.5','Bare Zn i 2.8','Bare Zn i 5.0','MLD_Alucone eigen 0.5 i 1.5','MLD Alucone eigen 0.5 i 2.8','MLD Alucone eigen 0.5 i 5']
-    folder_names = ['Bare Zn nostress interface','MLD Alucone eigen0.5bulk0.03GPa interface 1.1GPa','MLD Alucone eigen0.5bulk0.01GPa interface 1.2GPa','MLD Alucone eigen0.5bulk0.005GPa interface 1.3GPa']
+    folder_names = ['Bare Zn nostress interface','MLD Alucone eigen0.5bulk0.005GPa interface 1.3GPa']
+    #folder_names = ['Bare Zn nostress interface','MLD Alucone eigen0.5bulk0.03GPa interface 1.1GPa','MLD Alucone eigen0.5bulk0.01GPa interface 1.2GPa','MLD Alucone eigen0.5bulk0.005GPa interface 1.3GPa']
 
     #folder_names = [ 'Bare Zn aniso 0.00', 'Bare Zn aniso 0.04', 'Bare Zn aniso 0.2', 'Bare Zn aniso 0.4', 'MLD eigen 0.5 aniso 0.00', 'MLD eigen 0.5 aniso 0.2',
     #                 'MLD eigen 0.5 aniso 0.04', 'MLD eigen 0.5 aniso 0.4']
