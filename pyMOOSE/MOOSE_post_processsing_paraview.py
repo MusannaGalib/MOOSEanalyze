@@ -901,7 +901,6 @@ def calculate_eta_distance_in_folder(folder_path):
 
 
 
-
 def plot_points_vs_time(base_directory, folder_names=None, order=5):
     if folder_names is None:
         folder_names = []
@@ -911,16 +910,42 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
     for folder_name in folder_names:
         folder_path = os.path.join(base_directory, folder_name)
         if os.path.exists(folder_path):
-            csv_file_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
-            if os.path.exists(csv_file_path):
-                print(f"Reading CSV file for folder: {folder_name}")
-                df = pd.read_csv(csv_file_path)
-                df['Folder'] = folder_name  # Add a column to identify the folder
-                data_frames.append(df)
+            csv_file_path_01 = os.path.join(folder_path, 'eta_distance_with_time_0.01.csv')
+            csv_file_path_099 = os.path.join(folder_path, 'eta_distance_with_time_0.99.csv')
+    
+            if os.path.exists(csv_file_path_01) and os.path.exists(csv_file_path_099):
+                print(f"Reading CSV files for folder: {folder_name}")
+                df_01 = pd.read_csv(csv_file_path_01)
+                df_099 = pd.read_csv(csv_file_path_099)
+                
+                # Calculate the difference in Points:0 between eta = 0.01 and eta = 0.99
+                df_diff = pd.DataFrame()
+                df_diff['Time'] = df_01['Time']
+                df_diff['Points:0_diff'] = df_01['Points:0'] - df_099['Points:0']
+                df_diff['Folder'] = folder_name  # Add a column to identify the folder
+                
+                data_frames.append(df_diff)
             else:
                 print(f"CSV file not found in folder: {folder_name}")
         else:
             print(f"Folder not found: {folder_name}")
+
+    
+
+    #for folder_name in folder_names:
+    #    folder_path = os.path.join(base_directory, folder_name)
+    #    if os.path.exists(folder_path):
+    #        csv_file_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
+    #        if os.path.exists(csv_file_path):
+    #            print(f"Reading CSV file for folder: {folder_name}")
+    #            df = pd.read_csv(csv_file_path)
+    #            df['Folder'] = folder_name  # Add a column to identify the folder
+    #            data_frames.append(df)
+    #        else:
+    #            print(f"CSV file not found in folder: {folder_name}")
+    #    else:
+    #        print(f"Folder not found: {folder_name}")
+            
     
     if data_frames:
         # Concatenate data from all data frames
@@ -929,8 +954,10 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         # Plot Points:0 vs Time without fitted line
         plt.figure(figsize=(8, 6))
         for folder_name, group_df in combined_df.groupby('Folder'):
-            plt.plot(group_df['Time'][group_df['Time'] <= 200], group_df['Points:0'][group_df['Time'] <= 200],
+            plt.plot(group_df['Time'][group_df['Time'] <= 200], group_df['Points:0_diff'][group_df['Time'] <= 200],
                      label=folder_name, marker=' ', linestyle='-', linewidth=1)
+            #plt.plot(group_df['Time'][group_df['Time'] <= 200], group_df['Points:0'][group_df['Time'] <= 200],
+            #         label=folder_name, marker=' ', linestyle='-', linewidth=1)
         
         #plt.title('Points:0 vs Time for All Folders')
         plt.xlabel('Time', fontsize=22)
@@ -973,7 +1000,8 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
 
             # Fit polynomial regression line
             x = group_df['Time'][group_df['Time'] <= 220]
-            y = group_df['Points:0'][group_df['Time'] <= 220]
+            y = group_df['Points:0_diff'][group_df['Time'] <= 220]
+            #y = group_df['Points:0'][group_df['Time'] <= 220]
             z = np.polyfit(x, y, order)
             p = np.poly1d(z)
             #plt.plot(x, p(x), linestyle='-', label=f'{folder_name} Fit', linewidth=1)
@@ -1003,10 +1031,6 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         print(f"Plot with fitted line saved as: {plot_file_path}")
     else:
         print("No data found for plotting.")
-
-
-
-
 
 
 
