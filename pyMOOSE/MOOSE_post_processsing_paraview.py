@@ -819,7 +819,7 @@ def calculate_eta_distance_in_folder(folder_path):
         # Create the first 'Contour' filter for eta = 0.01
         contour1 = Contour(Input=input_oute)
         contour1.ContourBy = ['POINTS', 'eta']
-        contour1.Isosurfaces = [0.01]
+        contour1.Isosurfaces = [0.1]
         contour1.PointMergeMethod = 'Uniform Binning'
 
         # Create the first 'Integrate Variables' filter
@@ -954,7 +954,7 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
         # Plot Points:0 vs Time without fitted line
         plt.figure(figsize=(8, 6))
         for folder_name, group_df in combined_df.groupby('Folder'):
-            plt.plot(group_df['Time'][group_df['Time'] <= 200], group_df['Points:0_diff'][group_df['Time'] <= 200],
+            plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0_diff'][group_df['Time'] <= 180],
                      label=folder_name, marker=' ', linestyle='-', linewidth=1)
             #plt.plot(group_df['Time'][group_df['Time'] <= 200], group_df['Points:0'][group_df['Time'] <= 200],
             #         label=folder_name, marker=' ', linestyle='-', linewidth=1)
@@ -999,8 +999,8 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
                 label_prefix = folder_name  # Fallback to the folder name
 
             # Fit polynomial regression line
-            x = group_df['Time'][group_df['Time'] <= 220]
-            y = group_df['Points:0_diff'][group_df['Time'] <= 220]
+            x = group_df['Time'][group_df['Time'] <= 180]
+            y = group_df['Points:0_diff'][group_df['Time'] <= 180]
             #y = group_df['Points:0'][group_df['Time'] <= 220]
             z = np.polyfit(x, y, order)
             p = np.poly1d(z)
