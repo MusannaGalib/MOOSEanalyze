@@ -819,7 +819,7 @@ def calculate_eta_distance_in_folder(folder_path):
         # Create the first 'Contour' filter for eta = 0.01
         contour1 = Contour(Input=input_oute)
         contour1.ContourBy = ['POINTS', 'eta']
-        contour1.Isosurfaces = [0.1]
+        contour1.Isosurfaces = [0.02]
         contour1.PointMergeMethod = 'Uniform Binning'
 
         # Create the first 'Integrate Variables' filter
@@ -1037,6 +1037,66 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
 
 
 
+def automate_plot_over_line(folder_path):
+
+
+    # Load the input_out.e file from the given folder path
+    input_out_path = os.path.join(folder_path, 'input_out.e')
+
+    # Create a new 'Plot Over Line'
+    plotOverLine1 = PlotOverLine(registrationName='PlotOverLine1', Input=input_out_path)
+    
+    # Initialize point coordinates
+    y_point = -1.0254779763650728e-06
+    z_point = 0.0
+    Point2_y = 200.00000012007683
+
+    for x in range(30, 51):
+        # Set points for Plot Over Line
+        plotOverLine1.Point1 = [x, y_point, z_point]
+        plotOverLine1.Point2 = [x, Point2_y, z_point]
+
+        # Get active view
+        renderView1 = GetActiveViewOrCreate('RenderView')
+
+        # Show data in view
+        plotOverLine1Display = Show(plotOverLine1, renderView1, 'GeometryRepresentation')
+
+        # Get color transfer function/color map for 'eta'
+        etaLUT = GetColorTransferFunction('eta')
+
+        # Trace defaults for the display properties
+        plotOverLine1Display.Representation = 'Surface'
+        plotOverLine1Display.ColorArrayName = ['POINTS', 'eta']
+        plotOverLine1Display.LookupTable = etaLUT
+
+        # Create a new 'Line Chart View'
+        lineChartView1 = CreateView('XYChartView')
+
+        # Show data in view
+        plotOverLine1Display_1 = Show(plotOverLine1, lineChartView1, 'XYChartRepresentation')
+
+        # Update the view to ensure updated data information
+        renderView1.Update()
+
+        # Extract data from the Plot Over Line filter
+        plotOverLine1Data = servermanager.Fetch(plotOverLine1)
+
+        # Calculate the mean of the variable 'eta'
+        eta_values = plotOverLine1Data.GetPointData().GetArray('eta')
+        num_points = eta_values.GetNumberOfTuples()
+        eta_sum = 0
+
+        for i in range(num_points):
+            eta_sum += eta_values.GetValue(i)
+
+        eta_mean = eta_sum / num_points
+
+        print(f"Mean value of eta over the line from Point1=[{x}, {y_point}, {z_point}] to Point2=[{x}, {Point2_y}, {z_point}]:", eta_mean)
+
+
+
+
 
 
 
@@ -1067,6 +1127,7 @@ if __name__ == "__main__":
     generate_and_save_contours(base_directory, specific_times)
     plot_contours_from_csv(base_directory)
     plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
+    
 
     # Specify folder names to process only those folders
     folder_names = ['Bare_Zn','MLD_Alucone_eigen_0.5']

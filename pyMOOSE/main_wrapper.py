@@ -42,7 +42,8 @@ try:
                          plot_sigma22_aux_over_line_combined_top_bottom,
                          plot_sigma22_aux_over_line_combined_left_right,
                          calculate_eta_distance_with_time,
-                         plot_points_vs_time)
+                         plot_points_vs_time,
+                         automate_plot_over_line)
 
 except ModuleNotFoundError:
     print("Failed to import pyMOOSE. Ensure the package is correctly placed within the project.")
@@ -94,12 +95,11 @@ def main():
     #plot_points_vs_time(base_directory, folder_names=None, order=2)
 
 
-    #folder_names = ['Bare Zn i 1.5','Bare Zn i 2.8','Bare Zn i 5.0','MLD_Alucone eigen 0.5 i 1.5','MLD Alucone eigen 0.5 i 2.8','MLD Alucone eigen 0.5 i 5']
-    #folder_names = ['Bare Zn nostress interface','MLD Alucone eigen0.5bulk0.005GPa interface 1.3GPa']
-    folder_names = ['Bare Zn nostress interface','MLD Alucone eigen0.5bulk0.03GPa interface 1.1GPa','MLD Alucone eigen0.5bulk0.01GPa interface 1.2GPa','MLD Alucone eigen0.5bulk0.005GPa interface 1.3GPa']
+    #folder_names = ['Bare Zn i 1.5','Bare Zn i 2.8','Bare Zn i 5.0','MLD Alucone eigen 0.5 i 1.5','MLD Alucone eigen 0.5 i 2.8','MLD Alucone eigen 0.5 i 5']
+    #folder_names = ['Bare Zn nostress interface','MLD Alucone eigen0.5bulk0.03GPa interface 1.1GPa','MLD Alucone eigen0.5bulk0.01GPa interface 1.2GPa','MLD Alucone eigen0.5bulk0.005GPa interface 1.3GPa']
 
-    #folder_names = [ 'Bare Zn aniso 0.00', 'Bare Zn aniso 0.04', 'Bare Zn aniso 0.2', 'Bare Zn aniso 0.4', 'MLD eigen 0.5 aniso 0.00', 'MLD eigen 0.5 aniso 0.2',
-    #                 'MLD eigen 0.5 aniso 0.04', 'MLD eigen 0.5 aniso 0.4']
+    folder_names = [ 'Bare Zn aniso 0.00', 'Bare Zn aniso 0.04', 'Bare Zn aniso 0.2', 'Bare Zn aniso 0.4', 'MLD eigen 0.5 aniso 0.00', 'MLD eigen 0.5 aniso 0.2',
+                     'MLD eigen 0.5 aniso 0.04', 'MLD eigen 0.5 aniso 0.4']
     
 
     #folder_names = ['Bare_Zn_anisotropy_0.000', 'Bare_Zn', 'Bare_Zn_anisotropy_0.2',  'Bare_Zn_anisotropy_0.4_1', 'MLD_Alucone_eigen_0.5_anisotropy_0.000', 'MLD_Alucone_eigen_0.5_1','MLD_Alucone_eigen_0.5_anisotropy_0.2','MLD_Alucone_eigen_0.5_anisotropy_0.4_1']
@@ -110,8 +110,9 @@ def main():
        # compare_two_contour_plots(base_directory, specific_time, folder_names)
         #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
         #plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
-        #calculate_eta_distance_with_time(base_directory, folder_names)
-        plot_points_vs_time(base_directory, folder_names, order=11)
+        calculate_eta_distance_with_time(base_directory, folder_names)
+        plot_points_vs_time(base_directory, folder_names, order=6)
+        automate_plot_over_line(folder_path)
 
     # Or, call without specifying folder_names to auto-detect and process all folders
     #compare_folders_at_time(base_directory, specific_times, var_names)    
