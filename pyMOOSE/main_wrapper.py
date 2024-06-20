@@ -110,9 +110,9 @@ def main():
        # compare_two_contour_plots(base_directory, specific_time, folder_names)
         #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
         #plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
-        calculate_eta_distance_with_time(base_directory, folder_names)
-        plot_points_vs_time(base_directory, folder_names, order=6)
-        automate_plot_over_line(folder_path)
+        #calculate_eta_distance_with_time(base_directory, folder_names)
+        #plot_points_vs_time(base_directory, folder_names, order=6)
+        automate_plot_over_line(base_directory, folder_names)
 
     # Or, call without specifying folder_names to auto-detect and process all folders
     #compare_folders_at_time(base_directory, specific_times, var_names)    

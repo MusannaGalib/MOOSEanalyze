@@ -1037,62 +1037,83 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
 
 
 
-def automate_plot_over_line(folder_path):
+
+def automate_plot_over_line(base_directory, folder_names=None):
+    if isinstance(folder_names, list):
+        folder_paths = [os.path.join(base_directory, folder_name) for folder_name in folder_names]
+    else:
+        folder_paths = [os.path.join(base_directory, folder_names) if folder_names else base_directory]
+
+    for folder_path in folder_paths:
+        input_oute = None
+
+        # Iterate through files in the specified directory
+        for file in os.listdir(folder_path):
+            if file.endswith("input_out.e"):
+                input_file_path = os.path.join(folder_path, file)
+                input_oute = IOSSReader(FileName=[input_file_path])
+                input_oute.UpdatePipeline()
+
+        # Ensure input_oute is properly assigned
+        if input_oute is None:
+            print(f"No input_out.e file found in the directory: {folder_path}")
+            continue
+
+        # Create a new 'Plot Over Line'
+        plotOverLine1 = PlotOverLine(registrationName='PlotOverLine1', Input=input_oute)
+        
+        # Initialize point coordinates
+        y_point = -1.0254779763650728e-06
+        z_point = 0.0
+        Point2_y = 200.00000012007683
+
+        for x in range(30, 51):
+            # Set points for Plot Over Line
+            plotOverLine1.Point1 = [x, y_point, z_point]
+            plotOverLine1.Point2 = [x, Point2_y, z_point]
+
+            # Get active view
+            renderView1 = GetActiveViewOrCreate('RenderView')
+
+            # Show data in view
+            plotOverLine1Display = Show(plotOverLine1, renderView1, 'GeometryRepresentation')
+
+            # Get color transfer function/color map for 'eta'
+            etaLUT = GetColorTransferFunction('eta')
+
+            # Trace defaults for the display properties
+            plotOverLine1Display.Representation = 'Surface'
+            plotOverLine1Display.ColorArrayName = ['POINTS', 'eta']
+            plotOverLine1Display.LookupTable = etaLUT
+
+            # Create a new 'Line Chart View'
+            lineChartView1 = CreateView('XYChartView')
+
+            # Show data in view
+            plotOverLine1Display_1 = Show(plotOverLine1, lineChartView1, 'XYChartRepresentation')
+
+            # Update the view to ensure updated data information
+            renderView1.Update()
+
+            # Extract data from the Plot Over Line filter
+            plotOverLine1Data = servermanager.Fetch(plotOverLine1)
+
+            # Calculate the mean of the variable 'eta'
+            eta_values = plotOverLine1Data.GetPointData().GetArray('eta')
+            num_points = eta_values.GetNumberOfTuples()
+            eta_sum = 0
+
+            for i in range(num_points):
+                eta_sum += eta_values.GetValue(i)
+
+            eta_mean = eta_sum / num_points
+
+            print(f"Mean value of eta over the line from Point1=[{x}, {y_point}, {z_point}] to Point2=[{x}, {Point2_y}, {z_point}]:", eta_mean)
 
 
-    # Load the input_out.e file from the given folder path
-    input_out_path = os.path.join(folder_path, 'input_out.e')
 
-    # Create a new 'Plot Over Line'
-    plotOverLine1 = PlotOverLine(registrationName='PlotOverLine1', Input=input_out_path)
-    
-    # Initialize point coordinates
-    y_point = -1.0254779763650728e-06
-    z_point = 0.0
-    Point2_y = 200.00000012007683
 
-    for x in range(30, 51):
-        # Set points for Plot Over Line
-        plotOverLine1.Point1 = [x, y_point, z_point]
-        plotOverLine1.Point2 = [x, Point2_y, z_point]
 
-        # Get active view
-        renderView1 = GetActiveViewOrCreate('RenderView')
-
-        # Show data in view
-        plotOverLine1Display = Show(plotOverLine1, renderView1, 'GeometryRepresentation')
-
-        # Get color transfer function/color map for 'eta'
-        etaLUT = GetColorTransferFunction('eta')
-
-        # Trace defaults for the display properties
-        plotOverLine1Display.Representation = 'Surface'
-        plotOverLine1Display.ColorArrayName = ['POINTS', 'eta']
-        plotOverLine1Display.LookupTable = etaLUT
-
-        # Create a new 'Line Chart View'
-        lineChartView1 = CreateView('XYChartView')
-
-        # Show data in view
-        plotOverLine1Display_1 = Show(plotOverLine1, lineChartView1, 'XYChartRepresentation')
-
-        # Update the view to ensure updated data information
-        renderView1.Update()
-
-        # Extract data from the Plot Over Line filter
-        plotOverLine1Data = servermanager.Fetch(plotOverLine1)
-
-        # Calculate the mean of the variable 'eta'
-        eta_values = plotOverLine1Data.GetPointData().GetArray('eta')
-        num_points = eta_values.GetNumberOfTuples()
-        eta_sum = 0
-
-        for i in range(num_points):
-            eta_sum += eta_values.GetValue(i)
-
-        eta_mean = eta_sum / num_points
-
-        print(f"Mean value of eta over the line from Point1=[{x}, {y_point}, {z_point}] to Point2=[{x}, {Point2_y}, {z_point}]:", eta_mean)
 
 
 
