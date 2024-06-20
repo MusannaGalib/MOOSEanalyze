@@ -1112,7 +1112,7 @@ def automate_plot_over_line(base_directory, folder_names=None):
 
         # Save the data to a CSV file for integrate_variables2
         SaveData(output_csv_path2, proxy=integrate_variables2, WriteTimeSteps=1,
-                 PointDataArrays=['Time', 'disp', 'eta', 'pot', 'w'],  # Include 'Time' in PointDataArrays
+                 PointDataArrays=['Time', 'disp', 'eta', 'pot', 'w', 'CoordsX_times_eta_0.99'],  # Include 'Time' in PointDataArrays
                  CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
                                  'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
                                  'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
