@@ -1040,7 +1040,7 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
 
 
 
-def automate_plot_over_line(base_directory, folder_names=None):
+def calculate_eta_distance_from_centroid_in_folder(base_directory, folder_names=None):
     import os
     from paraview.simple import IOSSReader, Contour, IntegrateVariables, SaveData, Calculator
 

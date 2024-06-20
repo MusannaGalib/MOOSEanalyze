@@ -43,7 +43,7 @@ try:
                          plot_sigma22_aux_over_line_combined_left_right,
                          calculate_eta_distance_with_time,
                          plot_points_vs_time,
-                         automate_plot_over_line)
+                         calculate_eta_distance_from_centroid_in_folder)
 
 except ModuleNotFoundError:
     print("Failed to import pyMOOSE. Ensure the package is correctly placed within the project.")
@@ -112,7 +112,7 @@ def main():
         #plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
         #calculate_eta_distance_with_time(base_directory, folder_names)
         #plot_points_vs_time(base_directory, folder_names, order=6)
-        automate_plot_over_line(base_directory, folder_names)
+        calculate_eta_distance_from_centroid_in_folder(base_directory, folder_names)
 
     # Or, call without specifying folder_names to auto-detect and process all folders
     #compare_folders_at_time(base_directory, specific_times, var_names)    
