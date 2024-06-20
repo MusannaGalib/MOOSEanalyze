@@ -901,6 +901,7 @@ def calculate_eta_distance_in_folder(folder_path):
 
 
 
+
 def plot_points_vs_time(base_directory, folder_names=None, order=5):
     if folder_names is None:
         folder_names = []
@@ -1038,78 +1039,93 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
 
 
 
+
 def automate_plot_over_line(base_directory, folder_names=None):
-    if isinstance(folder_names, list):
-        folder_paths = [os.path.join(base_directory, folder_name) for folder_name in folder_names]
-    else:
-        folder_paths = [os.path.join(base_directory, folder_names) if folder_names else base_directory]
+    import os
+    from paraview.simple import IOSSReader, Contour, IntegrateVariables, SaveData, Calculator
 
-    for folder_path in folder_paths:
-        input_oute = None
+    if folder_names is None:
+        folder_names = []
+    
+    if folder_names:
+        # Iterate over each specified folder in folder_names
+        for folder_name in folder_names:
+            folder_path = os.path.join(base_directory, folder_name)
 
-        # Iterate through files in the specified directory
-        for file in os.listdir(folder_path):
-            if file.endswith("input_out.e"):
-                input_file_path = os.path.join(folder_path, file)
-                input_oute = IOSSReader(FileName=[input_file_path])
-                input_oute.UpdatePipeline()
 
-        # Ensure input_oute is properly assigned
-        if input_oute is None:
-            print(f"No input_out.e file found in the directory: {folder_path}")
-            continue
+    # Load the input_out.e file from the given folder path
+    input_out_path = os.path.join(folder_path, 'input_out.e')
 
-        # Create a new 'Plot Over Line'
-        plotOverLine1 = PlotOverLine(registrationName='PlotOverLine1', Input=input_oute)
+    # Check if the input_out.e file exists
+    if not os.path.exists(input_out_path):
+        print(f"Error: input_out.e file not found in folder: {folder_path}")
+        return
+
+    try:
+        # Load the input_out.e file as a ParaView source using IOSSReader
+        input_oute = IOSSReader(FileName=[input_out_path])
         
-        # Initialize point coordinates
-        y_point = -1.0254779763650728e-06
-        z_point = 0.0
-        Point2_y = 200.00000012007683
+        # Create the 'Contour' filter for eta = 0.01
+        contour1 = Contour(Input=input_oute)
+        contour1.ContourBy = ['POINTS', 'eta']
+        contour1.Isosurfaces = [0.02]
+        contour1.PointMergeMethod = 'Uniform Binning'
 
-        for x in range(30, 51):
-            # Set points for Plot Over Line
-            plotOverLine1.Point1 = [x, y_point, z_point]
-            plotOverLine1.Point2 = [x, Point2_y, z_point]
+        # Create the 'Integrate Variables' filter
+        integrate_variables1 = IntegrateVariables(Input=contour1)
+        integrate_variables1.DivideCellDataByVolume = 1
 
-            # Get active view
-            renderView1 = GetActiveViewOrCreate('RenderView')
+        # Define the output CSV path for integrate_variables1
+        output_csv_path1 = os.path.join(folder_path, 'eta_distance_with_time_0.01.csv')
 
-            # Show data in view
-            plotOverLine1Display = Show(plotOverLine1, renderView1, 'GeometryRepresentation')
+        # Save the data to a CSV file for integrate_variables1
+        SaveData(output_csv_path1, proxy=integrate_variables1, WriteTimeSteps=1,
+                 PointDataArrays=['Time', 'disp', 'eta', 'pot', 'w'],  # Include 'Time' in PointDataArrays
+                 CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
+                                 'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+                                 'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
+                                 'sigma22_aux'],
+                 FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
+                 Precision=12,
+                 UseScientificNotation=1,
+                 AddTime=1)
 
-            # Get color transfer function/color map for 'eta'
-            etaLUT = GetColorTransferFunction('eta')
+        print(f"Data saved to: {output_csv_path1}")
 
-            # Trace defaults for the display properties
-            plotOverLine1Display.Representation = 'Surface'
-            plotOverLine1Display.ColorArrayName = ['POINTS', 'eta']
-            plotOverLine1Display.LookupTable = etaLUT
+        # Create the 'Contour' filter for eta = 0.99
+        contour2 = Contour(Input=input_oute)
+        contour2.ContourBy = ['POINTS', 'eta']
+        contour2.Isosurfaces = [0.99]
+        contour2.PointMergeMethod = 'Uniform Binning'
 
-            # Create a new 'Line Chart View'
-            lineChartView1 = CreateView('XYChartView')
+        # Create the 'Calculator' filter for coordsX * eta for eta = 0.99
+        calculator = Calculator(Input=contour2)
+        calculator.ResultArrayName = 'CoordsX_times_eta_0.99'
+        calculator.Function = 'coordsX * eta'
 
-            # Show data in view
-            plotOverLine1Display_1 = Show(plotOverLine1, lineChartView1, 'XYChartRepresentation')
+        # Create the 'Integrate Variables' filter
+        integrate_variables2 = IntegrateVariables(Input=calculator)
+        integrate_variables2.DivideCellDataByVolume = 1
 
-            # Update the view to ensure updated data information
-            renderView1.Update()
+        # Define the output CSV path for integrate_variables2
+        output_csv_path2 = os.path.join(folder_path, 'eta_distance_with_time_calculated_0.99.csv')
 
-            # Extract data from the Plot Over Line filter
-            plotOverLine1Data = servermanager.Fetch(plotOverLine1)
+        # Save the data to a CSV file for integrate_variables2
+        SaveData(output_csv_path2, proxy=integrate_variables2, WriteTimeSteps=1,
+                 PointDataArrays=['Time', 'disp', 'eta', 'pot', 'w'],  # Include 'Time' in PointDataArrays
+                 CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
+                                 'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+                                 'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
+                                 'sigma22_aux'],
+                 FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
+                 Precision=12,
+                 UseScientificNotation=1,
+                 AddTime=1)
 
-            # Calculate the mean of the variable 'eta'
-            eta_values = plotOverLine1Data.GetPointData().GetArray('eta')
-            num_points = eta_values.GetNumberOfTuples()
-            eta_sum = 0
-
-            for i in range(num_points):
-                eta_sum += eta_values.GetValue(i)
-
-            eta_mean = eta_sum / num_points
-
-            print(f"Mean value of eta over the line from Point1=[{x}, {y_point}, {z_point}] to Point2=[{x}, {Point2_y}, {z_point}]:", eta_mean)
-
+        print(f"Data saved to: {output_csv_path2}")
+    
+    except Exception as e:
+        print(f"Error processing folder {folder_path}: {e}")
 
 
 
