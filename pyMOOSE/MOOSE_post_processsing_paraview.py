@@ -1228,11 +1228,15 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
 
 
 
-def plot_points_vs_time_with_max_w(base_directory, folder_names=None):
+
+
+
+def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
     if folder_names is None:
         folder_names = []
     
-    data_frames = []  # To store data from all CSV files
+    data_frames_raw = []  # To store raw data from all CSV files
+    data_frames_fit = []  # To store fitted data for visualization
     
     for folder_name in folder_names:
         folder_path = os.path.join(base_directory, folder_name)
@@ -1247,18 +1251,27 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None):
             max_w_data = df.loc[max_w_indices, ['Time', 'Points:0', 'w']]
             max_w_data['Folder'] = folder_name
             
-            data_frames.append(max_w_data)
+            data_frames_raw.append(max_w_data)  # Raw data for plotting without fit
+            
+            # Fit polynomial regression line for visualization
+            x = max_w_data['Time']
+            y = max_w_data['Points:0']
+            z = np.polyfit(x, y, order)
+            p = np.poly1d(z)
+            
+            fitted_data = pd.DataFrame({'Time': x, 'Points:0_fit': p(x), 'Folder': folder_name})
+            data_frames_fit.append(fitted_data)  # Fitted data for visualization
         else:
             print(f"CSV file not found in folder: {folder_name}")
     
-    if data_frames:
-        # Concatenate data from all data frames
-        combined_df = pd.concat(data_frames)
+    if data_frames_raw and data_frames_fit:
+        # Concatenate raw data from all data frames
+        combined_df_raw = pd.concat(data_frames_raw)
         
-        # Plot Points:0 vs Time for maximum w
+        # Plot Points:0 vs Time for maximum w (Raw data)
         plt.figure(figsize=(8, 6))
-        for folder_name, group_df in combined_df.groupby('Folder'):
-            plt.plot(group_df['Time'], group_df['Points:0'], label=folder_name, marker=' ', linestyle='-', linewidth=1)
+        for folder_name, group_df in combined_df_raw.groupby('Folder'):
+            plt.plot(group_df['Time'], group_df['Points:0'], label=f'{folder_name} Raw', marker=' ', linestyle='-', linewidth=1)
         
         plt.xlabel('Time', fontsize=22)
         plt.ylabel('Points:0', fontsize=22)
@@ -1267,16 +1280,61 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None):
         plt.grid(False)
         plt.legend()
         
-        # Construct the plot file path
+        # Construct the plot file path for raw data
         folder_name_str = '_'.join(folder_names)
-        plot_file_path = os.path.join(base_directory, f'points_vs_time_max_w_{folder_name_str}.png')
+        plot_file_path_raw = os.path.join(base_directory, f'points_vs_time_max_w_{folder_name_str}_raw.png')
         
-        # Save the plot
-        plt.savefig(plot_file_path, dpi=600)
+        # Save the plot for raw data
+        plt.savefig(plot_file_path_raw, dpi=600)
         plt.close()
-        print(f"Plot with maximum w points vs time saved as: {plot_file_path}")
+        print(f"Plot with maximum w points vs time (Raw) saved as: {plot_file_path_raw}")
+        
+        # Concatenate fitted data from all data frames
+        combined_df_fit = pd.concat(data_frames_fit)
+        
+        # Plot Points:0 vs Time with fitted line
+        plt.figure(figsize=(8, 6))
+        for folder_name, group_df in combined_df_fit.groupby('Folder'):
+            aniso_value = folder_name.split('interface')[-1].strip()
+
+            if 'Bare Zn' in folder_name:
+                linestyle = '-'
+                label_prefix = 'Bare Zn'
+            elif 'MLD' in folder_name:
+                linestyle = '--'
+                label_prefix = 'MLD'
+            else:
+                linestyle = '-'
+                label_prefix = folder_name
+            
+            x = group_df['Time']
+            y_fit = group_df['Points:0_fit']
+            
+            plt.plot(x, y_fit, linestyle=linestyle, label=f'{label_prefix} {aniso_value}', linewidth=1)
+
+        plt.xlabel('Time', fontsize=16)
+        plt.ylabel('Points:0', fontsize=16)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
+        plt.grid(False)
+        plt.legend(fontsize=14)
+        plt.tight_layout()
+        
+        # Construct the plot file path for fitted data
+        plot_file_path_fit = os.path.join(base_directory, f'points_vs_time_max_w_{folder_name_str}_fit.png')
+        
+        # Save the plot for fitted data
+        plt.savefig(plot_file_path_fit, dpi=600)
+        plt.close()
+        print(f"Plot with maximum w points vs time (Fit) saved as: {plot_file_path_fit}")
     else:
         print("No data found for plotting.")
+
+
+
+
+
+
 
 
 
