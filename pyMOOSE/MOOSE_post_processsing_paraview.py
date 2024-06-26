@@ -750,7 +750,7 @@ def calculate_eta_distance_in_folder(folder_path):
    try:
        # Load the input_out.e file as a ParaView source using IOSSReader
        input_oute = IOSSReader(FileName=[input_out_path])
-       
+    
        # Create a new 'Contour' filter
        contour = Contour(Input=input_oute)
        contour.ContourBy = ['POINTS', 'eta']
@@ -783,6 +783,57 @@ def calculate_eta_distance_in_folder(folder_path):
        print(f"Error processing folder {folder_path}: {e}")
 
 
+
+
+
+def calculate_max_x_coordinate(folder_path):
+    # Load the input_out.e file from the given folder path
+    input_out_path = os.path.join(folder_path, 'input_out.e')
+    
+    # Check if the input_out.e file exists
+    if not os.path.exists(input_out_path):
+        print(f"Error: input_out.e file not found in folder: {folder_path}")
+        return
+    
+    try:
+        # Load the input_out.e file as a ParaView source using IOSSReader
+        input_oute = IOSSReader(FileName=[input_out_path])
+        
+        # Create a new 'Contour' filter
+        contour = Contour(Input=input_oute)
+        contour.ContourBy = ['POINTS', 'eta']
+        contour.Isosurfaces = [0.01]  # Set the contour value for eta to define the profile 
+        contour.PointMergeMethod = 'Uniform Binning'
+        
+        # Fetch the data from the contour filter
+        from paraview.servermanager import Fetch
+        fetched_data = Fetch(contour)
+        
+        # Get the point coordinates
+        points = fetched_data.GetPoints()
+        num_points = points.GetNumberOfPoints()
+        
+        # Iterate through the points to find the maximum X coordinate
+        max_x_coords = []
+        for i in range(num_points):
+            coord = points.GetPoint(i)
+            max_x_coords.append(coord[0])
+        
+        max_x = max(max_x_coords)
+        
+        # Save the maximum X coordinate for the current time step
+        output_csv_path = os.path.join(folder_path, 'max_x_coordinate.csv')
+        
+        # Create a DataFrame to store the results
+        df = pd.DataFrame({"Max_X_Coordinate": [max_x]})
+        
+        # Save the DataFrame to a CSV file
+        df.to_csv(output_csv_path, index=False, mode='a', header=not os.path.exists(output_csv_path))
+        
+        print(f"Max X Coordinate saved to: {output_csv_path}")
+    
+    except Exception as e:
+        print(f"Error processing folder {folder_path}: {e}")
 
 
 
