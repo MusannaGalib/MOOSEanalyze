@@ -43,7 +43,8 @@ try:
                          plot_sigma22_aux_over_line_combined_left_right,
                          calculate_eta_distance_with_time,
                          plot_points_vs_time,
-                         calculate_max_x_coordinate
+                         calculate_max_x_coordinate,
+                         plot_points_vs_time_with_max_w
                          )
 
 except ModuleNotFoundError:
