@@ -111,10 +111,11 @@ def main():
        # compare_two_contour_plots(base_directory, specific_time, folder_names)
         #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
         #plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
-        calculate_eta_distance_with_time(base_directory, folder_names)
+        #calculate_eta_distance_with_time(base_directory, folder_names)
         #calculate_eta_distance_from_centroid_in_folder(base_directory, folder_names)
-        plot_points_vs_time(base_directory, folder_names, order=6)
         calculate_max_x_coordinate(base_directory, folder_names)
+        #plot_points_vs_time(base_directory, folder_names, order=6)
+
 
 
     # Or, call without specifying folder_names to auto-detect and process all folders
