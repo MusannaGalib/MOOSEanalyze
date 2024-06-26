@@ -786,19 +786,30 @@ def calculate_eta_distance_in_folder(folder_path):
 
 
 
-def calculate_max_x_coordinate(folder_path):
+def calculate_max_x_coordinate(base_directory, folder_names=None):
+    import os
+    from paraview.simple import IOSSReader, Contour, IntegrateVariables, SaveData, Calculator,servermanager
+
+    if folder_names is None:
+        folder_names = []
+    
+    if folder_names:
+        # Iterate over each specified folder in folder_names
+        for folder_name in folder_names:
+            folder_path = os.path.join(base_directory, folder_name)
+
+
     # Load the input_out.e file from the given folder path
     input_out_path = os.path.join(folder_path, 'input_out.e')
-    
+
     # Check if the input_out.e file exists
     if not os.path.exists(input_out_path):
         print(f"Error: input_out.e file not found in folder: {folder_path}")
         return
-    
+
     try:
         # Load the input_out.e file as a ParaView source using IOSSReader
         input_oute = IOSSReader(FileName=[input_out_path])
-        
         # Create a new 'Contour' filter
         contour = Contour(Input=input_oute)
         contour.ContourBy = ['POINTS', 'eta']

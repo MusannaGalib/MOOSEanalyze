@@ -114,6 +114,7 @@ def main():
         calculate_eta_distance_with_time(base_directory, folder_names)
         #calculate_eta_distance_from_centroid_in_folder(base_directory, folder_names)
         plot_points_vs_time(base_directory, folder_names, order=6)
+        calculate_max_x_coordinate(base_directory, folder_names)
 
 
     # Or, call without specifying folder_names to auto-detect and process all folders
