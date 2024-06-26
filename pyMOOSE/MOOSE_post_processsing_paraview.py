@@ -787,11 +787,17 @@ def calculate_eta_distance_in_folder(folder_path):
 
 
 
+
+
+
+
+
 def calculate_max_x_coordinate(base_directory, folder_names=None):
-    
     import os
+    import numpy as np
     import pandas as pd
-    from paraview.simple import IOSSReader, Contour, SaveData, servermanager
+    from paraview.simple import IOSSReader, Contour, QuerySelect, GetAnimationScene, GetTimeKeeper, GetActiveSource, UpdatePipeline
+    from paraview.servermanager import Fetch
 
     if folder_names is None:
         folder_names = []
@@ -819,47 +825,59 @@ def calculate_max_x_coordinate(base_directory, folder_names=None):
                 contour.Isosurfaces = [0.01]  # Set the contour value for eta to define the profile 
                 contour.PointMergeMethod = 'Uniform Binning'
                 
-                # Fetch the data from the contour filter
-                from paraview.servermanager import Fetch
-                fetched_data = Fetch(contour)
+                # Update the pipeline to ensure the contour is processed
+                UpdatePipeline(contour)
+
+                # Get the animation scene and time steps
+                animation_scene = GetAnimationScene()
+                time_steps = animation_scene.TimeKeeper.TimestepValues
                 
-                # Function to get all points from the fetched data
-                def get_all_points(data):
-                    points = []
-                    if data.IsA("vtkMultiBlockDataSet"):
-                        for i in range(data.GetNumberOfBlocks()):
-                            block = data.GetBlock(i)
-                            if block and block.GetNumberOfPoints() > 0:
-                                for j in range(block.GetNumberOfPoints()):
-                                    points.append(block.GetPoint(j))
-                    else:
-                        for i in range(data.GetNumberOfPoints()):
-                            points.append(data.GetPoint(i))
-                    return points
+                # Initialize an empty list to store maximum X coordinates for each time step
+                max_x_coords = []
+
+                # Iterate over all time steps
+                for time_step in time_steps:
+                    # Set the current time step
+                    animation_scene.TimeKeeper.Time = time_step
+                    UpdatePipeline(contour)
+
+                    # Apply QuerySelect to find the point with the maximum value of 'eta'
+                    query = QuerySelect(Input=contour, QueryString='(eta == max(eta))', FieldType='POINT', InsideOut=0)
+                    UpdatePipeline(query)
+
+                    # Get the coordinates of the point with the maximum 'eta' value
+                    query_data = Fetch(query)
+                    max_x = None
+                    if query_data.GetNumberOfPoints() > 0:
+                        point = query_data.GetPoint(0)
+                        max_x = point[0]
+
+                    max_x_coords.append(max_x)
                 
-                points = get_all_points(fetched_data)
+                # Save the NumPy array of maximum X coordinates for each time step
+                max_x_array = np.array(max_x_coords)
+                npy_output_path = os.path.join(folder_path, 'max_x_coordinates.npy')
+                np.save(npy_output_path, max_x_array)
                 
-                if not points:
-                    print(f"No points found in the contour for folder: {folder_path}")
-                    continue
+                # Save the maximum X coordinates to a CSV file
+                output_csv_path = os.path.join(folder_path, 'max_x_coordinates.csv')
+                df = pd.DataFrame({"Time_Step": time_steps, "Max_X_Coordinate": max_x_coords})
+                df.to_csv(output_csv_path, index=False, mode='w', header=True)
                 
-                # Iterate through the points to find the maximum X coordinate
-                max_x_coords = [coord[0] for coord in points]
-                max_x = max(max_x_coords)
-                
-                # Save the maximum X coordinate for the current time step
-                output_csv_path = os.path.join(folder_path, 'max_x_coordinate.csv')
-                
-                # Create a DataFrame to store the results
-                df = pd.DataFrame({"Max_X_Coordinate": [max_x]})
-                
-                # Save the DataFrame to a CSV file
-                df.to_csv(output_csv_path, index=False, mode='a', header=not os.path.exists(output_csv_path))
-                
-                print(f"Max X Coordinate saved to: {output_csv_path}")
+                print(f"Max X Coordinates saved to: {output_csv_path}")
+                print(f"Max X Coordinates array saved to: {npy_output_path}")
             
             except Exception as e:
                 print(f"Error processing folder {folder_path}: {e}")
+
+
+
+
+
+
+
+
+
 
 
 
