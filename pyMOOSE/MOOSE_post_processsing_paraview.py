@@ -817,7 +817,6 @@ def calculate_max_x_coordinate(base_directory, folder_names=None):
                 continue
 
             try:
-                # Load the input_out.e file as a ParaView source using IOSSReader
                 input_oute = IOSSReader(FileName=os.path.join(folder_path, 'input_out.e'))
 
                 # Example: Create a 'Contour' filter
@@ -1226,6 +1225,58 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
 
 
 
+
+
+
+def plot_points_vs_time_with_max_w(base_directory, folder_names=None):
+    if folder_names is None:
+        folder_names = []
+    
+    data_frames = []  # To store data from all CSV files
+    
+    for folder_name in folder_names:
+        folder_path = os.path.join(base_directory, folder_name)
+        csv_file_path = os.path.join(folder_path, 'output_data_with_time_steps.csv')
+        
+        if os.path.exists(csv_file_path):
+            print(f"Reading CSV file for folder: {folder_name}")
+            df = pd.read_csv(csv_file_path)
+            
+            # Find maximum w for each time step
+            max_w_indices = df.groupby('Time')['w'].idxmax()
+            max_w_data = df.loc[max_w_indices, ['Time', 'Points:0', 'w']]
+            max_w_data['Folder'] = folder_name
+            
+            data_frames.append(max_w_data)
+        else:
+            print(f"CSV file not found in folder: {folder_name}")
+    
+    if data_frames:
+        # Concatenate data from all data frames
+        combined_df = pd.concat(data_frames)
+        
+        # Plot Points:0 vs Time for maximum w
+        plt.figure(figsize=(8, 6))
+        for folder_name, group_df in combined_df.groupby('Folder'):
+            plt.plot(group_df['Time'], group_df['Points:0'], label=folder_name, marker=' ', linestyle='-', linewidth=1)
+        
+        plt.xlabel('Time', fontsize=22)
+        plt.ylabel('Points:0', fontsize=22)
+        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=18)
+        plt.grid(False)
+        plt.legend()
+        
+        # Construct the plot file path
+        folder_name_str = '_'.join(folder_names)
+        plot_file_path = os.path.join(base_directory, f'points_vs_time_max_w_{folder_name_str}.png')
+        
+        # Save the plot
+        plt.savefig(plot_file_path, dpi=600)
+        plt.close()
+        print(f"Plot with maximum w points vs time saved as: {plot_file_path}")
+    else:
+        print("No data found for plotting.")
 
 
 
