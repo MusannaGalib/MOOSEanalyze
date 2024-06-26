@@ -792,83 +792,68 @@ def calculate_eta_distance_in_folder(folder_path):
 
 
 
+
+
+
+
+
+
+
+
 def calculate_max_x_coordinate(base_directory, folder_names=None):
     import os
-    import numpy as np
     import pandas as pd
-    from paraview.simple import IOSSReader, Contour, QuerySelect, GetAnimationScene, GetTimeKeeper, GetActiveSource, UpdatePipeline
-    from paraview.servermanager import Fetch
 
     if folder_names is None:
         folder_names = []
 
     if folder_names:
-        # Iterate over each specified folder in folder_names
         for folder_name in folder_names:
             folder_path = os.path.join(base_directory, folder_name)
-
-            # Load the input_out.e file from the given folder path
             input_out_path = os.path.join(folder_path, 'input_out.e')
 
-            # Check if the input_out.e file exists
             if not os.path.exists(input_out_path):
                 print(f"Error: input_out.e file not found in folder: {folder_path}")
                 continue
 
             try:
                 # Load the input_out.e file as a ParaView source using IOSSReader
-                input_oute = IOSSReader(FileName=[input_out_path])
+                input_oute = IOSSReader(FileName=os.path.join(folder_path, 'input_out.e'))
 
-                # Create a new 'Contour' filter
-                contour = Contour(Input=input_oute)
-                contour.ContourBy = ['POINTS', 'eta']
-                contour.Isosurfaces = [0.01]  # Set the contour value for eta to define the profile 
-                contour.PointMergeMethod = 'Uniform Binning'
-                
-                # Update the pipeline to ensure the contour is processed
-                UpdatePipeline(contour)
+                # Example: Create a 'Contour' filter
+                contour1 = Contour(Input=input_oute)
+                contour1.ContourBy = ['POINTS', 'eta']
+                contour1.Isosurfaces = [0.01]
+                contour1.PointMergeMethod = 'Uniform Binning'
 
-                # Get the animation scene and time steps
-                animation_scene = GetAnimationScene()
-                time_steps = animation_scene.TimeKeeper.TimestepValues
-                
-                # Initialize an empty list to store maximum X coordinates for each time step
-                max_x_coords = []
+                # Save data with time steps
+                output_csv_path = os.path.join(folder_path, 'output_data_with_time_steps.csv')
+                SaveData(output_csv_path, proxy=contour1, WriteTimeSteps=1,
+                        PointDataArrays=['disp', 'eta', 'pot', 'w'],
+                        CellDataArrays=['G', 'c', 'dG/deta', 'dG/dpot', 'dG/dw', 'extra_stress_00',
+                                        'extra_stress_01', 'extra_stress_02', 'extra_stress_10',
+                                        'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+                                        'extra_stress_21', 'extra_stress_22', 'object_id',
+                                        'sigma11_aux', 'sigma12_aux', 'sigma22_aux'],
+                        FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory',
+                                        'num_lin_it', 'num_nonlin_it'],
+                        AddTimeStep=1, AddTime=1)
 
-                # Iterate over all time steps
-                for time_step in time_steps:
-                    # Set the current time step
-                    animation_scene.TimeKeeper.Time = time_step
-                    UpdatePipeline(contour)
+                print(f"Data with time steps saved to: {output_csv_path}")
 
-                    # Apply QuerySelect to find the point with the maximum value of 'eta'
-                    query = QuerySelect(Input=contour, QueryString='(eta == max(eta))', FieldType='POINT', InsideOut=0)
-                    UpdatePipeline(query)
-
-                    # Get the coordinates of the point with the maximum 'eta' value
-                    query_data = Fetch(query)
-                    max_x = None
-                    if query_data.GetNumberOfPoints() > 0:
-                        point = query_data.GetPoint(0)
-                        max_x = point[0]
-
-                    max_x_coords.append(max_x)
-                
-                # Save the NumPy array of maximum X coordinates for each time step
-                max_x_array = np.array(max_x_coords)
-                npy_output_path = os.path.join(folder_path, 'max_x_coordinates.npy')
-                np.save(npy_output_path, max_x_array)
-                
-                # Save the maximum X coordinates to a CSV file
-                output_csv_path = os.path.join(folder_path, 'max_x_coordinates.csv')
-                df = pd.DataFrame({"Time_Step": time_steps, "Max_X_Coordinate": max_x_coords})
-                df.to_csv(output_csv_path, index=False, mode='w', header=True)
-                
-                print(f"Max X Coordinates saved to: {output_csv_path}")
-                print(f"Max X Coordinates array saved to: {npy_output_path}")
-            
             except Exception as e:
                 print(f"Error processing folder {folder_path}: {e}")
+
+
+
+
+
+
+
+
+
+
+
 
 
 
