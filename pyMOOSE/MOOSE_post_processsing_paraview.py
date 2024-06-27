@@ -1231,6 +1231,8 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
 
 
 
+
+
 def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
     if folder_names is None:
         folder_names = []
@@ -1251,11 +1253,19 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
             max_w_data = df.loc[max_w_indices, ['Time', 'Points:0', 'w']]
             max_w_data['Folder'] = folder_name
             
-            data_frames_raw.append(max_w_data)  # Raw data for plotting without fit
+            # Filter data for the first 180 seconds
+            max_w_data_180 = max_w_data[max_w_data['Time'] <= 180]
+            
+            # Save data to CSV file for verification
+            csv_save_path = os.path.join(folder_path, f'{folder_name}_max_w_data_180s.csv')
+            max_w_data_180.to_csv(csv_save_path, index=False)
+            print(f"Data for {folder_name} saved to CSV: {csv_save_path}")
+            
+            data_frames_raw.append(max_w_data_180)  # Raw data for plotting without fit
             
             # Fit polynomial regression line for visualization
-            x = max_w_data['Time']
-            y = max_w_data['Points:0']
+            x = max_w_data_180['Time']
+            y = max_w_data_180['Points:0']
             z = np.polyfit(x, y, order)
             p = np.poly1d(z)
             
@@ -1274,7 +1284,7 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
             plt.plot(group_df['Time'], group_df['Points:0'], label=f'{folder_name} Raw', marker=' ', linestyle='-', linewidth=1)
         
         plt.xlabel('Time', fontsize=22)
-        plt.ylabel('Points:0', fontsize=22)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=22)
         plt.xticks(fontsize=18)
         plt.yticks(fontsize=18)
         plt.grid(False)
@@ -1293,7 +1303,7 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
         combined_df_fit = pd.concat(data_frames_fit)
         
         # Plot Points:0 vs Time with fitted line
-        plt.figure(figsize=(8, 6))
+        plt.figure(figsize=(4, 3.5))
         for folder_name, group_df in combined_df_fit.groupby('Folder'):
             aniso_value = folder_name.split('interface')[-1].strip()
 
@@ -1313,22 +1323,27 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
             plt.plot(x, y_fit, linestyle=linestyle, label=f'{label_prefix} {aniso_value}', linewidth=1)
 
         plt.xlabel('Time', fontsize=16)
-        plt.ylabel('Points:0', fontsize=16)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=16)
         plt.xticks(fontsize=14)
         plt.yticks(fontsize=14)
         plt.grid(False)
         plt.legend(fontsize=14)
+        legend = plt.legend(frameon=False)  # Remove the border
         plt.tight_layout()
+                
+
         
         # Construct the plot file path for fitted data
         plot_file_path_fit = os.path.join(base_directory, f'points_vs_time_max_w_{folder_name_str}_fit.png')
         
         # Save the plot for fitted data
-        plt.savefig(plot_file_path_fit, dpi=600)
+        plt.savefig(plot_file_path_fit, dpi=1200)
         plt.close()
         print(f"Plot with maximum w points vs time (Fit) saved as: {plot_file_path_fit}")
     else:
         print("No data found for plotting.")
+
+
 
 
 
