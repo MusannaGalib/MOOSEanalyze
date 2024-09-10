@@ -1,16 +1,17 @@
-Package Name: pyMOOSE
-Version: 1.0.0
-Description:
--------------
+![PyPI downloads](https://img.shields.io/pypi/dm/your-package-name)
+[![Paper](https://img.shields.io/badge/Journal-J.ComMatSci-blue)](https://doi.org/your-paper-doi)
+[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
+
+# pyMOOSE
 pyMOOSE is a Python package designed to facilitate advanced analysis and visualization of scientific data, particularly focusing on post-processing simulation results. With a range of functions to generate contour plots, analyze variables over lines, and integrate with common scientific computing tools, pyMOOSE aims to streamline the workflow for researchers and engineers.
 
-Installation:
+## Installation:
 --------------
 To install pyMOOSE, run the following command in your terminal:
 
 pip install pyMOOSE
 
-Usage:
+## Usage:
 ------
 Here's how to get started with pyMOOSE:
 There are 2 different ways
@@ -53,7 +54,7 @@ For comparing the dendrite lengths
     ```python 
      aniso_value = folder_name.split('aniso')[-1].strip()  #interface/i/aniso
     ```
-    
+
 ## Authors
 This Software is developed by Musanna Galib
 
