@@ -1295,7 +1295,7 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
         plot_file_path_raw = os.path.join(base_directory, f'points_vs_time_max_w_{folder_name_str}_raw.png')
         
         # Save the plot for raw data
-        plt.savefig(plot_file_path_raw, dpi=600)
+        plt.savefig(plot_file_path_raw, dpi=1200)
         plt.close()
         print(f"Plot with maximum w points vs time (Raw) saved as: {plot_file_path_raw}")
         
@@ -1309,10 +1309,10 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
 
             if 'Bare Zn' in folder_name:
                 linestyle = '-'
-                label_prefix = 'Bare Zn'
+                label_prefix = 'No Stress' #No stress
             elif 'MLD' in folder_name:
                 linestyle = '--'
-                label_prefix = 'MLD'
+                label_prefix = ''
             else:
                 linestyle = '-'
                 label_prefix = folder_name
@@ -1327,8 +1327,8 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
         plt.xticks(fontsize=14)
         plt.yticks(fontsize=14)
         plt.grid(False)
-        plt.legend(fontsize=14)
-        legend = plt.legend(frameon=False)  # Remove the border
+        # Create legend once with proper font size and no border
+        plt.legend(fontsize=14, frameon=False)
         plt.tight_layout()
                 
 
