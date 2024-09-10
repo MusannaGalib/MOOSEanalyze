@@ -1,15 +1,17 @@
 ![PyPI downloads](https://img.shields.io/pypi/dm/your-package-name)
-[![Paper](https://img.shields.io/badge/ACS-Energy-Lett-blue)](https://doi.org/your-paper-doi)
+[![Paper](https://img.shields.io/badge/ACS_Energy_Lett-blue)](https://doi.org/your-paper-doi)
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
 
 # pyMOOSE
-pyMOOSE is a Python package designed to facilitate advanced analysis and visualization of scientific data, particularly focusing on post-processing simulation results. With a range of functions to generate contour plots, analyze variables over lines, and integrate with common scientific computing tools, pyMOOSE aims to streamline the workflow for researchers and engineers.
+pyMOOSE is a Python package designed to facilitate advanced analysis and visualization of post-processing of MOOSE simulation's exodus file format. pyMOOSE python packageis built on Paraview's PvPython module.
 
 ## Installation:
 
 To install pyMOOSE, run the following command in your terminal:
 
+```
 pip install pyMOOSE
+```
 
 ## Usage:
 
