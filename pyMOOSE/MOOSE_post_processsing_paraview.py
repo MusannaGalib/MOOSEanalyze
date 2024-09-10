@@ -1305,14 +1305,14 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
         # Plot Points:0 vs Time with fitted line
         plt.figure(figsize=(4, 3.5))
         for folder_name, group_df in combined_df_fit.groupby('Folder'):
-            aniso_value = folder_name.split('interface')[-1].strip()
+            aniso_value = folder_name.split('aniso')[-1].strip()  #interface/i/aniso
 
             if 'Bare Zn' in folder_name:
                 linestyle = '-'
-                label_prefix = 'No Stress' #No stress
+                label_prefix = 'Bare' #No stress
             elif 'MLD' in folder_name:
                 linestyle = '--'
-                label_prefix = ''
+                label_prefix = 'Coated'
             else:
                 linestyle = '-'
                 label_prefix = folder_name
@@ -1328,7 +1328,7 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
         plt.yticks(fontsize=14)
         plt.grid(False)
         # Create legend once with proper font size and no border
-        plt.legend(fontsize=14, frameon=False)
+        plt.legend(fontsize=11.5, frameon=False)
         plt.tight_layout()
                 
 
@@ -1337,7 +1337,7 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
         plot_file_path_fit = os.path.join(base_directory, f'points_vs_time_max_w_{folder_name_str}_fit.png')
         
         # Save the plot for fitted data
-        plt.savefig(plot_file_path_fit, dpi=1200)
+        plt.savefig(plot_file_path_fit, dpi=2400)
         plt.close()
         print(f"Plot with maximum w points vs time (Fit) saved as: {plot_file_path_fit}")
     else:
