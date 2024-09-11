@@ -1328,7 +1328,7 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
         plt.yticks(fontsize=14)
         plt.grid(False)
         # Create legend once with proper font size and no border
-        plt.legend(fontsize=11.5, frameon=False)
+        plt.legend(fontsize=11, frameon=False)
         plt.tight_layout()
                 
 
