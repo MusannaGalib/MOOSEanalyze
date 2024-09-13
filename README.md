@@ -63,7 +63,7 @@ This Software is developed by Musanna Galib
 
 ## Citing This Work
 If you use this software in your research, please cite the following paper:
-ffff
+
 
 ```python
 BibTeX entry:
