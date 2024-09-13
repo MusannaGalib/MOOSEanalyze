@@ -70,9 +70,9 @@ BibTeX entry:
 @article{YourPaper,
   title={Dendrite Inhibition using Heteroepitaxial Residual Stress in Zn Metal Batteries},
   author={Musanna Galib, Jian Liu, and Mauricio Ponga},
-  journal={Journal/Conference},
+  journal={ACS Energy Lett},
   year={2024},
-  publisher={Publisher}
+  publisher={American Chemical Society}
 }
 ```
 
