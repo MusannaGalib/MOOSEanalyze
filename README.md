@@ -1,6 +1,8 @@
 ![PyPI downloads](https://img.shields.io/pypi/dm/your-package-name)
 [![Paper](https://img.shields.io/badge/ACS_Energy_Lett-blue)](https://doi.org/your-paper-doi)
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
+[![Release](https://img.shields.io/badge/release-v0.0.1-brightgreen)](https://github.com/your-repo-name/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT_2.0-blue)](https://opensource.org/licenses/MIT)
 
 # pyMOOSE
 pyMOOSE is a Python package designed to facilitate advanced analysis and visualization of post-processing of MOOSE simulation's exodus file format. pyMOOSE python packageis built on Paraview's PvPython module.
