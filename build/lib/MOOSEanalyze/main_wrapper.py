@@ -48,7 +48,7 @@ try:
                          )
 
 except ModuleNotFoundError:
-    print("Failed to import pyMOOSE. Ensure the package is correctly placed within the project.")
+    print("Failed to import MOOSEanalyze. Ensure the package is correctly placed within the project.")
     sys.exit(1)
 
 

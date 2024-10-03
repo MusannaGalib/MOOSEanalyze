@@ -14,7 +14,6 @@ from paraview.simple import *
 from vtk.numpy_interface import dataset_adapter as dsa
 from vtk.util import numpy_support
 from vtk.util.numpy_support import vtk_to_numpy
-import seaborn as sns
 
 
 
@@ -43,10 +42,13 @@ try:
                          plot_sigma22_aux_over_line_combined_top_bottom,
                          plot_sigma22_aux_over_line_combined_left_right,
                          calculate_eta_distance_with_time,
-                         plot_points_vs_time)
+                         plot_points_vs_time,
+                         calculate_max_x_coordinate,
+                         plot_points_vs_time_with_max_w
+                         )
 
 except ModuleNotFoundError:
-    print("Failed to import pyMOOSE. Ensure the package is correctly placed within the project.")
+    print("Failed to import MOOSEanalyze. Ensure the package is correctly placed within the project.")
     sys.exit(1)
 
 
@@ -65,7 +67,7 @@ def main():
 
 
     # Specific times and variables might need to be adjusted based on your requirements
-    specific_times = [50.0, 100.0, 150.0]
+    specific_times = [60.0, 120.0, 160.0]
     var_names = ['disp', 'eta', 'pot', 'w', 'sigma11_aux', 'sigma22_aux']
 
     # Default specific times and variable names
@@ -92,17 +94,32 @@ def main():
     #plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
     #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
     #calculate_eta_distance_with_time(base_directory, folder_names=None)
-    #plot_points_vs_time(base_directory, folder_names=None)
+    #plot_points_vs_time(base_directory, folder_names=None, order=2)
 
 
-    folder_names = ['Bare_Zn_i_5.0_3', 'MLD_Alucone_eigen_0.5_i_5']
+    #folder_names = ['Bare Zn i 1.5','Bare Zn i 2.8','Bare Zn i 5.0','MLD Alucone eigen 0.5 i 1.5','MLD Alucone eigen 0.5 i 2.8','MLD Alucone eigen 0.5 i 5']
+    #folder_names = ['Bare Zn nostress interface','MLD Alucone eigen0.5bulk0.03GPa interface 1.1GPa','MLD Alucone eigen0.5bulk0.01GPa interface 1.2GPa','MLD Alucone eigen0.5bulk0.005GPa interface 1.3GPa']
+
+    folder_names = [ 'Bare Zn aniso 0.00', 'Bare Zn aniso 0.04', 'Bare Zn aniso 0.2', 'Bare Zn aniso 0.4', 'MLD eigen 0.5 aniso 0.00', 'MLD eigen 0.5 aniso 0.2',
+                     'MLD eigen 0.5 aniso 0.04', 'MLD eigen 0.5 aniso 0.4']
+    
+
+    #folder_names = ['Bare_Zn_anisotropy_0.000', 'Bare_Zn', 'Bare_Zn_anisotropy_0.2',  'Bare_Zn_anisotropy_0.4_1', 'MLD_Alucone_eigen_0.5_anisotropy_0.000', 'MLD_Alucone_eigen_0.5_1','MLD_Alucone_eigen_0.5_anisotropy_0.2','MLD_Alucone_eigen_0.5_anisotropy_0.4_1']
+    #folder_names = ['MLD_Alucone_eigen_0.5_Interface_.1GPa', 'MLD_Alucone_eigen_0.5_Interface_.5GPa', 'MLD_Alucone_eigen_0.5_1']
+
     for specific_time in specific_times:
-        compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
-        compare_two_contour_plots(base_directory, specific_time, folder_names)
-        plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
-        plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
-        calculate_eta_distance_with_time(base_directory, folder_names)
-        plot_points_vs_time(base_directory, folder_names)
+        #compare_folders_at_time(base_directory, specific_times, var_names, folder_names)
+        #compare_two_contour_plots(base_directory, specific_time, folder_names)
+        #plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_times, folder_names)
+        #plot_sigma22_aux_over_line_combined_left_right(base_directory, specific_times, folder_names)
+        #calculate_eta_distance_with_time(base_directory, folder_names)
+        #calculate_eta_distance_from_centroid_in_folder(base_directory, folder_names)
+        #plot_points_vs_time(base_directory, folder_names, order=6)
+        #calculate_max_x_coordinate(base_directory, folder_names)
+        plot_points_vs_time_with_max_w(base_directory, folder_names)
+
+
+
 
     # Or, call without specifying folder_names to auto-detect and process all folders
     #compare_folders_at_time(base_directory, specific_times, var_names)    

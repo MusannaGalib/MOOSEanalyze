@@ -14,7 +14,9 @@ from .MOOSE_post_processsing_paraview import (
     plot_sigma22_aux_over_line_combined_top_bottom,
     plot_sigma22_aux_over_line_combined_left_right,
     calculate_eta_distance_with_time,
-    plot_points_vs_time
+    plot_points_vs_time,
+    calculate_max_x_coordinate,
+    plot_points_vs_time_with_max_w
 )
 
 __all__ = [
@@ -30,4 +32,6 @@ __all__ = [
     "plot_sigma22_aux_over_line_combined_top_bottom",
     "plot_sigma22_aux_over_line_combined_left_right",
     "calculate_eta_distance_with_time",
-    "plot_points_vs_time"]
+    "plot_points_vs_time",
+    "calculate_max_x_coordinate",
+    "plot_points_vs_time_with_max_w"]

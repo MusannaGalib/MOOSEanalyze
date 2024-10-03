@@ -1,8 +1,8 @@
 Metadata-Version: 2.1
-Name: pyMOOSE
-Version: 0.1
+Name: MOOSEanalyze
+Version: 1.0
 Summary: 'A Python package for post-processing MOOSE data
-Home-page: https://github.com/MusannaGalib/pyMOOSE/
+Home-page: https://github.com/MusannaGalib/MOOSEanalyze/
 Author: Musanna Galib
 Author-email: galibubc@student.ubc.ca
 License: MIT
@@ -12,33 +12,38 @@ Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
-Package Name: pyMOOSE
-Version: 1.0.0
-Description:
--------------
-pyMOOSE is a Python package designed to facilitate advanced analysis and visualization of scientific data, particularly focusing on post-processing simulation results. With a range of functions to generate contour plots, analyze variables over lines, and integrate with common scientific computing tools, pyMOOSE aims to streamline the workflow for researchers and engineers.
+![PyPI downloads](https://img.shields.io/pypi/dm/your-package-name)
+[![Paper](https://img.shields.io/badge/ACS_Energy_Lett-blue)](https://doi.org/your-paper-doi)
+[![Python 3.6+](https://img.shields.io/badge/python-3.6+-red.svg)](https://www.python.org/downloads/)
+[![Release](https://img.shields.io/badge/release-v0.0.1-brightgreen)](https://github.com/MusannaGalib/MOOSEanalyze)
+[![License: MIT](https://img.shields.io/badge/license-MIT_2.0-yellow)](https://opensource.org/licenses/MIT)
 
-Installation:
---------------
-To install pyMOOSE, run the following command in your terminal:
+# MOOSEanalyze
+MOOSEanalyze is a Python package designed to facilitate advanced analysis and visualization of post-processing of MOOSE simulation's exodus file format. MOOSEanalyze python packageis built on Paraview's PvPython module.
 
-pip install pyMOOSE
+## Installation:
 
-Usage:
-------
-Here's how to get started with pyMOOSE:
+To install MOOSEanalyze, run the following command in your terminal:
+
+```
+pip install MOOSEanalyze
+```
+
+## Usage:
+
+Here's how to get started with MOOSEanalyze:
 There are 2 different ways
 
 For windows:
-Update 
+Update ```windows_run.bat``` file
 ```python
 cd /d \path\to\Paraview\bin
 PvPython \path\to\main_wrapper.py
 ```
-Double click on the windows_run.bat file 
+Double click on the ```windows_run.bat``` file 
 
-
-Running from main_wrapper.py
+For Linux:
+Running from ```main_wrapper.py```
 ```python
 cd path\to\Paraview\bin    ---> cd D:/Backup_31_July_2022/Research/Research/MOOSE/ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64/ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64/bin/
 Run  in command line -----> ./PvPython path/to/main_wrapper.py
@@ -58,6 +63,16 @@ For comparing between different folders automatically
     compare_folders_at_time(base_directory, specific_times, var_names)
 ```
 
+For comparing the dendrite lengths
+```python 
+        calculate_max_x_coordinate(base_directory, folder_names)
+        plot_points_vs_time_with_max_w(base_directory, folder_names)
+```
+    Change the following line to define which part of older name to be appeared in the plot legend 
+    ```python 
+     aniso_value = folder_name.split('aniso')[-1].strip()  #interface/i/aniso
+    ```
+
 ## Authors
 This Software is developed by Musanna Galib
 
@@ -69,11 +84,11 @@ If you use this software in your research, please cite the following paper:
 ```python
 BibTeX entry:
 @article{YourPaper,
-  title={Title of Your Paper},
-  author={Your Name},
-  journal={Journal/Conference},
+  title={Dendrite Inhibition using Heteroepitaxial Residual Stress in Zn Metal Batteries},
+  author={Musanna Galib, Jian Liu, and Mauricio Ponga},
+  journal={ACS Energy Lett},
   year={2024},
-  publisher={Publisher}
+  publisher={American Chemical Society}
 }
 ```
 

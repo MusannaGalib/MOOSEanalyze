@@ -7,8 +7,7 @@ import matplotlib.ticker as ticker
 import matplotlib.gridspec as gridspec
 from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
-import numpy as npl
-import seaborn as sns
+import numpy as np
 import re
 import csv
 import glob 
@@ -144,8 +143,8 @@ def setup_plot_over_line(input_oute, time_value):
     along with the start and end points of the line.
     """
     # Define start and end points of the line
-    point1 = [0.0, 100.0, 0.0]
-    point2 = [199.99999862765003, 100.0, 0.0]
+    point1 = [0.0, 120.0, 0.0]
+    point2 = [199.99999862765003, 120.0, 0.0]
 
     # Create the PlotOverLine filter with the input data
     plotOverLine = PlotOverLine(Input=input_oute,
@@ -573,7 +572,7 @@ def plot_sigma22_aux_over_line_combined_top_bottom(base_directory, specific_time
     if output_directory is None:
         output_directory = base_directory
     
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(4, 5), sharex=True)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(5, 6), sharex=True)
 
     for i, folder_name in enumerate(folder_names[:2]):
         folder_path = os.path.join(base_directory, folder_name)
@@ -740,90 +739,629 @@ def calculate_eta_distance_with_time(base_directory, folder_names=None):
                 calculate_eta_distance_in_folder(folder_path)
 
 def calculate_eta_distance_in_folder(folder_path):
-    # Load the input_out.e file from the given folder path
-    input_out_path = os.path.join(folder_path, 'input_out.e')
+   # Load the input_out.e file from the given folder path
+   input_out_path = os.path.join(folder_path, 'input_out.e')
+   
+   # Check if the input_out.e file exists
+   if not os.path.exists(input_out_path):
+       print(f"Error: input_out.e file not found in folder: {folder_path}")
+       return
+   
+   try:
+       # Load the input_out.e file as a ParaView source using IOSSReader
+       input_oute = IOSSReader(FileName=[input_out_path])
     
-    # Check if the input_out.e file exists
-    if not os.path.exists(input_out_path):
-        print(f"Error: input_out.e file not found in folder: {folder_path}")
-        return
-    
-    try:
-        # Load the input_out.e file as a ParaView source using IOSSReader
-        input_oute = IOSSReader(FileName=[input_out_path])
+       # Create a new 'Contour' filter
+       contour = Contour(Input=input_oute)
+       contour.ContourBy = ['POINTS', 'eta']
+       contour.Isosurfaces = [0.01]  # Set the contour value for eta to define the profile 
+       contour.PointMergeMethod = 'Uniform Binning'
+
+       # Create a new 'Integrate Variables' filter
+       integrate_variables = IntegrateVariables(Input=contour)  #IntegrateVariables will get the x coordinates and then average them  
+       integrate_variables.DivideCellDataByVolume = 1  # Divide cell data by volume
+
+       # Define the output CSV path
+       output_csv_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
+
+       # Save the data to a CSV file
+       SaveData(output_csv_path, proxy=integrate_variables, WriteTimeSteps=1,
+                ChooseArraysToWrite=1,
+                PointDataArrays=['disp', 'eta', 'pot', 'w'],
+                CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
+                                'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+                                'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
+                                'sigma22_aux'],
+               FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
+                Precision=12,
+                UseScientificNotation=1,
+                AddTime=1)
+       
+       print(f"Data saved to: {output_csv_path}")
+   
+   except Exception as e:
+       print(f"Error processing folder {folder_path}: {e}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def calculate_max_x_coordinate(base_directory, folder_names=None):
+    import os
+    import pandas as pd
+
+    if folder_names is None:
+        folder_names = []
+
+    if folder_names:
+        for folder_name in folder_names:
+            folder_path = os.path.join(base_directory, folder_name)
+            input_out_path = os.path.join(folder_path, 'input_out.e')
+
+            if not os.path.exists(input_out_path):
+                print(f"Error: input_out.e file not found in folder: {folder_path}")
+                continue
+
+            try:
+                input_oute = IOSSReader(FileName=os.path.join(folder_path, 'input_out.e'))
+
+                # Example: Create a 'Contour' filter
+                contour1 = Contour(Input=input_oute)
+                contour1.ContourBy = ['POINTS', 'eta']
+                contour1.Isosurfaces = [0.01]
+                contour1.PointMergeMethod = 'Uniform Binning'
+
+                # Save data with time steps
+                output_csv_path = os.path.join(folder_path, 'output_data_with_time_steps.csv')
+                SaveData(output_csv_path, proxy=contour1, WriteTimeSteps=1,
+                        PointDataArrays=['disp', 'eta', 'pot', 'w'],
+                        CellDataArrays=['G', 'c', 'dG/deta', 'dG/dpot', 'dG/dw', 'extra_stress_00',
+                                        'extra_stress_01', 'extra_stress_02', 'extra_stress_10',
+                                        'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+                                        'extra_stress_21', 'extra_stress_22', 'object_id',
+                                        'sigma11_aux', 'sigma12_aux', 'sigma22_aux'],
+                        FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory',
+                                        'num_lin_it', 'num_nonlin_it'],
+                        AddTimeStep=1, AddTime=1)
+
+                print(f"Data with time steps saved to: {output_csv_path}")
+
+            except Exception as e:
+                print(f"Error processing folder {folder_path}: {e}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def calculate_eta_distance_in_folder(folder_path):
+#     import os
+#     from paraview.simple import IOSSReader, Contour, IntegrateVariables, SaveData
+
+#     # Load the input_out.e file from the given folder path
+#     input_out_path = os.path.join(folder_path, 'input_out.e')
+
+#     # Check if the input_out.e file exists
+#     if not os.path.exists(input_out_path):
+#         print(f"Error: input_out.e file not found in folder: {folder_path}")
+#         return
+
+#     try:
+#         # Load the input_out.e file as a ParaView source using IOSSReader
+#         input_oute = IOSSReader(FileName=[input_out_path])
         
-        # Create a new 'Contour' filter
-        contour = Contour(Input=input_oute)
-        contour.ContourBy = ['POINTS', 'eta']
-        contour.Isosurfaces = [0.01]  # Set the contour value for eta to define the profile 
-        contour.PointMergeMethod = 'Uniform Binning'
+#         # Create the first 'Contour' filter for eta = 0.01
+#         contour1 = Contour(Input=input_oute)
+#         contour1.ContourBy = ['POINTS', 'eta']
+#         contour1.Isosurfaces = [0.02]
+#         contour1.PointMergeMethod = 'Uniform Binning'
 
-        # Create a new 'Integrate Variables' filter
-        integrate_variables = IntegrateVariables(Input=contour)  #IntegrateVariables will get the x coordinates and then average them  
-        integrate_variables.DivideCellDataByVolume = 1  # Divide cell data by volume
+#         # Create the first 'Integrate Variables' filter
+#         integrate_variables1 = IntegrateVariables(Input=contour1)
+#         integrate_variables1.DivideCellDataByVolume = 1
 
-        # Define the output CSV path
-        output_csv_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
+#         # Define the output CSV path for integrate_variables1
+#         output_csv_path1 = os.path.join(folder_path, 'eta_distance_with_time_0.01.csv')
 
-        # Save the data to a CSV file
-        SaveData(output_csv_path, proxy=integrate_variables, WriteTimeSteps=1,
-                 ChooseArraysToWrite=1,
-                 PointDataArrays=['disp', 'eta', 'pot', 'w'],
-                 CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
-                                 'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
-                                 'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
-                                 'sigma22_aux'],
-                 FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
-                 Precision=12,
-                 UseScientificNotation=1,
-                 AddTime=1)
-        
-        print(f"Data saved to: {output_csv_path}")
+#         # Save the data to a CSV file for integrate_variables1
+#         SaveData(output_csv_path1, proxy=integrate_variables1, WriteTimeSteps=1,
+#                  PointDataArrays=['Time', 'disp', 'eta', 'pot', 'w'],  # Include 'Time' in PointDataArrays
+#                  CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
+#                                  'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+#                                  'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
+#                                  'sigma22_aux'],
+#                  FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
+#                  Precision=12,
+#                  UseScientificNotation=1,
+#                  AddTime=1)
+
+#         print(f"Data saved to: {output_csv_path1}")
+
+#         # Create the second 'Contour' filter for eta = 0.99
+#         contour2 = Contour(Input=input_oute)
+#         contour2.ContourBy = ['POINTS', 'eta']
+#         contour2.Isosurfaces = [0.99]
+#         contour2.PointMergeMethod = 'Uniform Binning'
+
+#         # Create the second 'Integrate Variables' filter
+#         integrate_variables2 = IntegrateVariables(Input=contour2)
+#         integrate_variables2.DivideCellDataByVolume = 1
+
+#         # Define the output CSV path for integrate_variables2
+#         output_csv_path2 = os.path.join(folder_path, 'eta_distance_with_time_0.99.csv')
+
+#         # Save the data to a CSV file for integrate_variables2
+#         SaveData(output_csv_path2, proxy=integrate_variables2, WriteTimeSteps=1,
+#                  PointDataArrays=['Time', 'disp', 'eta', 'pot', 'w'],  # Include 'Time' in PointDataArrays
+#                  CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
+#                                  'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+#                                  'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
+#                                  'sigma22_aux'],
+#                  FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
+#                  Precision=12,
+#                  UseScientificNotation=1,
+#                  AddTime=1)
+
+#         print(f"Data saved to: {output_csv_path2}")
     
-    except Exception as e:
-        print(f"Error processing folder {folder_path}: {e}")
+#     except Exception as e:
+#         print(f"Error processing folder {folder_path}: {e}")
 
-def plot_points_vs_time(base_directory, folder_names=None):
+
+
+
+
+
+
+
+# def calculate_eta_distance_from_centroid_in_folder(base_directory, folder_names=None):
+#     import os
+#     from paraview.simple import IOSSReader, Contour, IntegrateVariables, SaveData, Calculator,servermanager
+
+#     if folder_names is None:
+#         folder_names = []
+    
+#     if folder_names:
+#         # Iterate over each specified folder in folder_names
+#         for folder_name in folder_names:
+#             folder_path = os.path.join(base_directory, folder_name)
+
+
+#     # Load the input_out.e file from the given folder path
+#     input_out_path = os.path.join(folder_path, 'input_out.e')
+
+#     # Check if the input_out.e file exists
+#     if not os.path.exists(input_out_path):
+#         print(f"Error: input_out.e file not found in folder: {folder_path}")
+#         return
+
+#     try:
+#         # Load the input_out.e file as a ParaView source using IOSSReader
+#         input_oute = IOSSReader(FileName=[input_out_path])
+        
+#         # Create the 'Contour' filter for eta = 0.01
+#         contour1 = Contour(Input=input_oute)
+#         contour1.ContourBy = ['POINTS', 'eta']
+#         contour1.Isosurfaces = [0.02]
+#         contour1.PointMergeMethod = 'Uniform Binning'
+
+#         # Create the 'Integrate Variables' filter
+#         integrate_variables1 = IntegrateVariables(Input=contour1)
+#         integrate_variables1.DivideCellDataByVolume = 1
+
+#         # Define the output CSV path for integrate_variables1
+#         output_csv_path1 = os.path.join(folder_path, 'eta_distance_with_time_0.01.csv')
+
+#         # Save the data to a CSV file for integrate_variables1
+#         SaveData(output_csv_path1, proxy=integrate_variables1, WriteTimeSteps=1,
+#                  PointDataArrays=['Time', 'disp', 'eta', 'pot', 'w'],  # Include 'Time' in PointDataArrays
+#                  CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
+#                                  'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+#                                  'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
+#                                  'sigma22_aux'],
+#                  FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
+#                  Precision=12,
+#                  UseScientificNotation=1,
+#                  AddTime=1)
+
+#         print(f"Data saved to: {output_csv_path1}")
+
+#         # Create the 'Contour' filter for eta = 0.99
+#         contour2 = Contour(Input=input_oute)
+#         contour2.ContourBy = ['POINTS', 'eta']
+#         contour2.Isosurfaces = [0.99]
+#         contour2.PointMergeMethod = 'Uniform Binning'
+
+#         # Create the 'Calculator' filter for coordsX * eta for eta = 0.99
+#         calculator = Calculator(Input=contour2)
+#         calculator.ResultArrayName = 'CoordsX_times_eta_0.99'
+#         calculator.Function = 'coordsX * eta'
+
+#         # Create the 'Integrate Variables' filter
+#         integrate_variables2 = IntegrateVariables(Input=calculator)
+#         integrate_variables2.DivideCellDataByVolume = 1
+
+
+#         # Fetch the result to inspect the available arrays
+#         result = servermanager.Fetch(integrate_variables2)
+#         point_data = result.GetPointData()
+#         num_arrays = point_data.GetNumberOfArrays()
+
+#         print("Available arrays in the integrated result:")
+#         for i in range(num_arrays):
+#             array_name = point_data.GetArrayName(i)
+#             print(f"Array {i}: {array_name}")
+
+
+#         # Define the output CSV path for integrate_variables2
+#         output_csv_path2 = os.path.join(folder_path, 'eta_distance_with_time_0.99.csv')
+
+#         # Save the data to a CSV file for integrate_variables2
+#         SaveData(output_csv_path2, proxy=integrate_variables2, WriteTimeSteps=1,
+#                  PointDataArrays=['Time', 'disp', 'eta', 'pot', 'w', 'CoordsX_times_eta_0.99'],  # Include 'Time' in PointDataArrays
+#                  CellDataArrays=['Length', 'extra_stress_00', 'extra_stress_01', 'extra_stress_02',
+#                                  'extra_stress_10', 'extra_stress_11', 'extra_stress_12', 'extra_stress_20',
+#                                  'extra_stress_21', 'extra_stress_22', 'object_id', 'sigma11_aux', 'sigma12_aux',
+#                                  'sigma22_aux'],
+#                  FieldDataArrays=['ETA', 'Information Records', 'QA Records', 'memory', 'num_lin_it', 'num_nonlin_it'],
+#                  Precision=12,
+#                  UseScientificNotation=1,
+#                  AddTime=1)
+
+#         print(f"Data saved to: {output_csv_path2}")
+    
+#     except Exception as e:
+#         print(f"Error processing folder {folder_path}: {e}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def plot_points_vs_time(base_directory, folder_names=None, order=5):
     if folder_names is None:
         folder_names = []
     
     data_frames = []  # To store data from all CSV files
     
+    # for folder_name in folder_names:
+    #     folder_path = os.path.join(base_directory, folder_name)
+    #     if os.path.exists(folder_path):
+    #         csv_file_path_01 = os.path.join(folder_path, 'eta_distance_with_time_0.01.csv')
+    #         csv_file_path_099 = os.path.join(folder_path, 'eta_distance_with_time_0.99.csv')
+    
+    #         if os.path.exists(csv_file_path_01) and os.path.exists(csv_file_path_099):
+    #             print(f"Reading CSV files for folder: {folder_name}")
+    #             df_01 = pd.read_csv(csv_file_path_01)
+    #             df_099 = pd.read_csv(csv_file_path_099)
+
+
+    #             # Check if 'CoordsX_times_eta_0.99' is in df_099
+    #             if 'CoordsX_times_eta_0.99' in df_099.columns:
+    #                 x_coord_099 = df_099['CoordsX_times_eta_0.99']
+    #             else:
+    #                 x_coord_099 = df_099['Points:0']
+                
+    #             # Calculate the difference in Points:0 between eta = 0.01 and eta = 0.99
+    #             df_diff = pd.DataFrame()
+    #             df_diff['Time'] = df_01['Time']
+    #             df_diff['Points:0_diff'] = df_01['Points:0'] - x_coord_099
+    #             df_diff['Folder'] = folder_name  # Add a column to identify the folder
+                
+    #             data_frames.append(df_diff)
+    #         else:
+    #             print(f"CSV file not found in folder: {folder_name}")
+    #     else:
+    #         print(f"Folder not found: {folder_name}")
+
+    
+
     for folder_name in folder_names:
-        folder_path = os.path.join(base_directory, folder_name)
-        if os.path.exists(folder_path):
-            csv_file_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
-            if os.path.exists(csv_file_path):
-                print(f"Reading CSV file for folder: {folder_name}")
-                df = pd.read_csv(csv_file_path)
-                df['Folder'] = folder_name  # Add a column to identify the folder
-                data_frames.append(df)
-            else:
-                print(f"CSV file not found in folder: {folder_name}")
-        else:
-            print(f"Folder not found: {folder_name}")
+       folder_path = os.path.join(base_directory, folder_name)
+       if os.path.exists(folder_path):
+           csv_file_path = os.path.join(folder_path, 'eta_distance_with_time.csv')
+           if os.path.exists(csv_file_path):
+               print(f"Reading CSV file for folder: {folder_name}")
+               df = pd.read_csv(csv_file_path)
+               df['Folder'] = folder_name  # Add a column to identify the folder
+               data_frames.append(df)
+           else:
+               print(f"CSV file not found in folder: {folder_name}")
+       else:
+           print(f"Folder not found: {folder_name}")
+            
     
     if data_frames:
         # Concatenate data from all data frames
         combined_df = pd.concat(data_frames)
         
-        # Plot Points:0 vs Time
-        plt.figure(figsize=(12, 8))
-        sns.lineplot(data=combined_df, x='Time', y='Points:0', hue='Folder', marker='o', linestyle='-')
-        plt.title('Points:0 vs Time for All Folders')
+        # Plot Points:0 vs Time without fitted line
+        plt.figure(figsize=(8, 6))
+        for folder_name, group_df in combined_df.groupby('Folder'):
+            # plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0_diff'][group_df['Time'] <= 180],
+            #          label=folder_name, marker=' ', linestyle='-', linewidth=1)
+            plt.plot(group_df['Time'][group_df['Time'] <= 200], group_df['Points:0'][group_df['Time'] <= 200],
+                    label=folder_name, marker=' ', linestyle='-', linewidth=1)
+        
+        #plt.title('Points:0 vs Time for All Folders')
         plt.xlabel('Time', fontsize=22)
-        plt.ylabel('Points:0', fontsize=22)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=22)
         plt.xticks(fontsize=18)
         plt.yticks(fontsize=18)
-        plt.grid(True)
+        plt.grid(False)
+        plt.legend()
         
-        # Save the plot
-        plot_file_path = os.path.join(base_directory, 'points_vs_time_all_folders.png')
+        # Construct the plot file path without fitted line
+        folder_name_str = '_'.join(folder_names)
+        plot_file_path = os.path.join(base_directory, f'points_vs_time_{folder_name_str}_without_fit.png')
+        
+        # Save the plot without fitted line
         plt.savefig(plot_file_path, dpi=600)
         plt.close()
-        print(f"Plot saved as: {plot_file_path}")
+        print(f"Plot without fitted line saved as: {plot_file_path}")
+        
+        # Plot Points:0 vs Time with fitted line
+        plt.figure(figsize=(4, 3.5))
+        for folder_name, group_df in combined_df.groupby('Folder'):
+            #plt.plot(group_df['Time'][group_df['Time'] <= 180], group_df['Points:0'][group_df['Time'] <= 180],
+                     #label=folder_name, marker=' ', linestyle='-', linewidth=1)
+            
+            # Extract the part after 'aniso' for the legend
+            #aniso_value = folder_name.split('aniso')[-1].strip()
+            #aniso_value = folder_name.split('i')[-1].strip()
+            aniso_value = folder_name.split('interface')[-1].strip()
+
+            # Determine linestyle based on the folder type
+            if 'Bare Zn' in folder_name:
+                linestyle = '-'
+                label_prefix = 'Bare Zn'
+            elif 'MLD' in folder_name:
+                linestyle = '--'
+                label_prefix = 'MLD'
+            else:
+                linestyle = '-'
+                label_prefix = folder_name  # Fallback to the folder name
+
+            # Fit polynomial regression line
+            x = group_df['Time'][group_df['Time'] <= 180]
+            #y = group_df['Points:0_diff'][group_df['Time'] <= 180]
+            y = group_df['Points:0'][group_df['Time'] <= 180]
+            z = np.polyfit(x, y, order)
+            p = np.poly1d(z)
+            #plt.plot(x, p(x), linestyle='-', label=f'{folder_name} Fit', linewidth=1)
+            #plt.plot(x, p(x), linestyle=linestyle, label=f'{label_prefix} $\delta$ {aniso_value}', linewidth=1)
+            #plt.plot(x, p(x), linestyle=linestyle, label=f'{label_prefix} i {aniso_value}', linewidth=1)
+            plt.plot(x, p(x), linestyle=linestyle, label=f'{label_prefix}  {aniso_value}', linewidth=1)
+
+        #plt.title('Points:0 vs Time for All Folders with Fitted Line')
+        plt.xlabel('Time', fontsize=16)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=16)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
+        plt.grid(False)
+        plt.legend(fontsize=14)  # Add the fontsize parameter to the legend function
+
+        # Use tight_layout to fit the plot within the figure size
+        legend = plt.legend(frameon=False)  # Remove the border
+        plt.tight_layout()
+
+        
+        # Construct the plot file path with fitted line
+        plot_file_path = os.path.join(base_directory, f'points_vs_time_{folder_name_str}_with_fit.png')
+        
+        # Save the plot with fitted line
+        plt.savefig(plot_file_path, dpi=1200)
+        plt.close()
+        print(f"Plot with fitted line saved as: {plot_file_path}")
     else:
         print("No data found for plotting.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
+    if folder_names is None:
+        folder_names = []
+    
+    data_frames_raw = []  # To store raw data from all CSV files
+    data_frames_fit = []  # To store fitted data for visualization
+    
+    for folder_name in folder_names:
+        folder_path = os.path.join(base_directory, folder_name)
+        csv_file_path = os.path.join(folder_path, 'output_data_with_time_steps.csv')
+        
+        if os.path.exists(csv_file_path):
+            print(f"Reading CSV file for folder: {folder_name}")
+            df = pd.read_csv(csv_file_path)
+            
+            # Find maximum w for each time step
+            max_w_indices = df.groupby('Time')['w'].idxmax()
+            max_w_data = df.loc[max_w_indices, ['Time', 'Points:0', 'w']]
+            max_w_data['Folder'] = folder_name
+            
+            # Filter data for the first 180 seconds
+            max_w_data_180 = max_w_data[max_w_data['Time'] <= 180]
+            
+            # Save data to CSV file for verification
+            csv_save_path = os.path.join(folder_path, f'{folder_name}_max_w_data_180s.csv')
+            max_w_data_180.to_csv(csv_save_path, index=False)
+            print(f"Data for {folder_name} saved to CSV: {csv_save_path}")
+            
+            data_frames_raw.append(max_w_data_180)  # Raw data for plotting without fit
+            
+            # Fit polynomial regression line for visualization
+            x = max_w_data_180['Time']
+            y = max_w_data_180['Points:0']
+            z = np.polyfit(x, y, order)
+            p = np.poly1d(z)
+            
+            fitted_data = pd.DataFrame({'Time': x, 'Points:0_fit': p(x), 'Folder': folder_name})
+            data_frames_fit.append(fitted_data)  # Fitted data for visualization
+        else:
+            print(f"CSV file not found in folder: {folder_name}")
+    
+    if data_frames_raw and data_frames_fit:
+        # Concatenate raw data from all data frames
+        combined_df_raw = pd.concat(data_frames_raw)
+        
+        # Plot Points:0 vs Time for maximum w (Raw data)
+        plt.figure(figsize=(8, 6))
+        for folder_name, group_df in combined_df_raw.groupby('Folder'):
+            plt.plot(group_df['Time'], group_df['Points:0'], label=f'{folder_name} Raw', marker=' ', linestyle='-', linewidth=1)
+        
+        plt.xlabel('Time', fontsize=22)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=22)
+        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=18)
+        plt.grid(False)
+        plt.legend()
+        
+        # Construct the plot file path for raw data
+        folder_name_str = '_'.join(folder_names)
+        plot_file_path_raw = os.path.join(base_directory, f'points_vs_time_max_w_{folder_name_str}_raw.png')
+        
+        # Save the plot for raw data
+        plt.savefig(plot_file_path_raw, dpi=1200)
+        plt.close()
+        print(f"Plot with maximum w points vs time (Raw) saved as: {plot_file_path_raw}")
+        
+        # Concatenate fitted data from all data frames
+        combined_df_fit = pd.concat(data_frames_fit)
+        
+        # Plot Points:0 vs Time with fitted line
+        plt.figure(figsize=(4, 3.5))
+        for folder_name, group_df in combined_df_fit.groupby('Folder'):
+            aniso_value = folder_name.split('aniso')[-1].strip()  #interface/i/aniso
+
+            if 'Bare Zn' in folder_name:
+                linestyle = '-'
+                label_prefix = 'Bare' #No stress
+            elif 'MLD' in folder_name:
+                linestyle = '--'
+                label_prefix = 'Coated'
+            else:
+                linestyle = '-'
+                label_prefix = folder_name
+            
+            x = group_df['Time']
+            y_fit = group_df['Points:0_fit']
+            
+            plt.plot(x, y_fit, linestyle=linestyle, label=f'{label_prefix} {aniso_value}', linewidth=1)
+
+        plt.xlabel('Time', fontsize=16)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=16)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
+        plt.grid(False)
+        # Create legend once with proper font size and no border
+        plt.legend(fontsize=11, frameon=False)
+        plt.tight_layout()
+                
+
+        
+        # Construct the plot file path for fitted data
+        plot_file_path_fit = os.path.join(base_directory, f'points_vs_time_max_w_{folder_name_str}_fit.png')
+        
+        # Save the plot for fitted data
+        plt.savefig(plot_file_path_fit, dpi=2400)
+        plt.close()
+        print(f"Plot with maximum w points vs time (Fit) saved as: {plot_file_path_fit}")
+    else:
+        print("No data found for plotting.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
@@ -851,6 +1389,7 @@ if __name__ == "__main__":
     generate_and_save_contours(base_directory, specific_times)
     plot_contours_from_csv(base_directory)
     plot_variables_over_line_combined_with_contour(base_directory, specific_times, var_names)
+    
 
     # Specify folder names to process only those folders
     folder_names = ['Bare_Zn','MLD_Alucone_eigen_0.5']
