@@ -17,20 +17,20 @@ from vtk.util.numpy_support import vtk_to_numpy
 
 
 
-#sys.path.append('D:\\Backup_31_July_2022\\Research\\Research\\pyMOOSE')
+#sys.path.append('D:\\Backup_31_July_2022\\Research\\Research\\MOOSEanalyze')
 
 #$Env:PATH += ";D:\Backup_31_July_2022\Research\Research\MOOSE\ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64\ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64\bin"
 
 
-# Assuming main_wrapper.py is in the pyMOOSE\pyMOOSE directory
-# and you want to import modules from pyMOOSE (one level up)
+# Assuming main_wrapper.py is in the MOOSEanalyze\MOOSEanalyze directory
+# and you want to import modules from MOOSEanalyze (one level up)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 # Now try to import your modules
 try:
-    from pyMOOSE import (find_and_process_files,
+    from MOOSEanalyze import (find_and_process_files,
                          plot_variables_across_timesteps,
                          plot_variables_over_line_combined,
                          plot_variables_over_line_each_timestep_separately,
