@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='pyMOOSE',
+    name='MOOSEanalyze',
     version='1.0',
     packages=find_packages(),
     install_requires=[
@@ -26,5 +26,5 @@ setup(
     keywords="MOOSE post-processing using Pvpython-paraview",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url="https://github.com/MusannaGalib/pyMOOSE/",   # project home page, if any
+    url="https://github.com/MusannaGalib/MOOSEanalyze/",   # project home page, if any
 )
