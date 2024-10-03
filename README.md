@@ -26,10 +26,10 @@ Update ```windows_run.bat``` file
 cd /d \path\to\Paraview\bin
 PvPython \path\to\main_wrapper.py
 ```
-Double click on the windows_run.bat file 
+Double click on the ```windows_run.bat``` file 
 
 
-Running from main_wrapper.py
+Running from ```main_wrapper.py```
 ```python
 cd path\to\Paraview\bin    ---> cd D:/Backup_31_July_2022/Research/Research/MOOSE/ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64/ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64/bin/
 Run  in command line -----> ./PvPython path/to/main_wrapper.py
