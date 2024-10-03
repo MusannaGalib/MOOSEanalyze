@@ -21,7 +21,7 @@ Here's how to get started with pyMOOSE:
 There are 2 different ways
 
 For windows:
-Update 
+Update ```windows_run.bat``` file
 ```python
 cd /d \path\to\Paraview\bin
 PvPython \path\to\main_wrapper.py
