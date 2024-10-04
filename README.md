@@ -45,7 +45,7 @@ For comparing between different folders manually
 ```
 For comparing between different folders automatically
 ```python
-    # Or, call without specifying folder_names to auto-detect and process all folders
+    # call without specifying folder_names to auto-detect and process all folders
     compare_folders_at_time(base_directory, specific_times, var_names)
 ```
 
@@ -54,10 +54,11 @@ For comparing the dendrite lengths
         calculate_max_x_coordinate(base_directory, folder_names)
         plot_points_vs_time_with_max_w(base_directory, folder_names)
 ```
-    Change the following line to define which part of older name to be appeared in the plot legend 
-    ```python 
+    
+```python 
+     # Change the following line to define which part of older name to be appeared in the plot legend 
      aniso_value = folder_name.split('aniso')[-1].strip()  #interface/i/aniso
-    ```
+```
 
 ## Authors
 This Software is developed by Musanna Galib
