@@ -26,6 +26,8 @@ MOOSEanalyze is a Python package designed to facilitate advanced analysis and vi
 │   │   ├── DFT
 │   │   ├── 2D/3D strain      <- The final, canonical data sets for modeling.
 │   │   └── Ab-inito simulation            <- The original, immutable data dump.└── make_dataset.py
+│            │
+│            ├── AIMD
 │   │
 │   ├── models         <- Scripts to train models and then use trained models to make
 │   │   │                 predictions
