@@ -7,13 +7,15 @@
 # MOOSEanalyze
 MOOSEanalyze is a Python package designed to facilitate advanced analysis and visualization of post-processing of MOOSE simulation's exodus file format. MOOSEanalyze python packageis built on Paraview's PvPython module.
 
+
+```
 ├── LICENSE
 ├── README.md          <- The top-level README for users of this project.
 ├── CODE_OF_CONDUCT.md <- Guidelines for users and contributors of the project.
 ├── CONTRIBUTING.md    <- Information on how to contribute to the project.
-├── data
-│   ├── processed      <- The final, canonical data sets for modeling.
-│   └── raw            <- The original, immutable data dump.
+├── DFT
+│   ├── 2D/3D strain      <- The final, canonical data sets for modeling.
+│   └── Ab-inito simulation            <- The original, immutable data dump.
 │
 ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
 │
@@ -41,6 +43,9 @@ MOOSEanalyze is a Python package designed to facilitate advanced analysis and vi
 │   └── visualisation  <- Scripts to create exploratory and results-oriented visualisations
 │       └── visualise.py
 └──
+```
+
+
 
 ## Installation:
 
