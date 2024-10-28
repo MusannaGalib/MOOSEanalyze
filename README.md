@@ -73,7 +73,7 @@ If you use this software in your research, please cite the following paper:
 BibTeX entry:
 @article{YourPaper,
   title={Dendrite Inhibition using Heteroepitaxial Residual Stress in Zn Metal Batteries},
-  author={Musanna Galib, Jian Liu, and Mauricio Ponga},
+  author={Musanna Galib, Amardeep Amardeep, Jian Liu, and Mauricio Ponga},
   journal={ACS Energy Lett},
   year={2024},
   publisher={American Chemical Society}
