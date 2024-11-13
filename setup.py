@@ -27,7 +27,7 @@ setup(
     # Additional metadata about your package.
     author='Musanna Galib',  # Replace with your name
     author_email='galibubc@student.ubc.ca',  # Replace with your email
-    description="'A Python package for post-processing MOOSE data",
+    description="A Python package for post-processing MOOSE data",
     license="MIT",
     keywords="MOOSE post-processing using Pvpython-paraview",
     long_description=open('README.md').read(),

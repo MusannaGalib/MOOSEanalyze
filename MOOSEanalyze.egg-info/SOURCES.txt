@@ -1,6 +1,7 @@
 LICENSE
 MANIFEST.in
 README.md
+pyproject.toml
 setup.py
 MOOSEanalyze/MOOSE_post_processsing_paraview.py
 MOOSEanalyze/__init__.py

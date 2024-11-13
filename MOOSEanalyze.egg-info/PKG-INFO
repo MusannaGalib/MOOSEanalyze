@@ -7,10 +7,13 @@ Author: Musanna Galib
 Author-email: galibubc@student.ubc.ca
 License: MIT
 Keywords: MOOSE post-processing using Pvpython-paraview
-Platform: UNKNOWN
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE
+Requires-Dist: pandas>=1.1.5
+Requires-Dist: matplotlib>=3.3.3
+Requires-Dist: numpy>=1.19.4
+Requires-Dist: seaborn>=0.13.2
 
 ![PyPI downloads](https://img.shields.io/pypi/dm/your-package-name)
 [![Paper](https://img.shields.io/badge/ACS_Energy_Lett-blue)](https://doi.org/your-paper-doi)
@@ -20,6 +23,7 @@ License-File: LICENSE
 
 # MOOSEanalyze
 MOOSEanalyze is a Python package designed to facilitate advanced analysis and visualization of post-processing of MOOSE simulation's exodus file format. MOOSEanalyze python packageis built on Paraview's PvPython module.
+
 
 ## Installation:
 
@@ -59,7 +63,7 @@ For comparing between different folders manually
 ```
 For comparing between different folders automatically
 ```python
-    # Or, call without specifying folder_names to auto-detect and process all folders
+    # call without specifying folder_names to auto-detect and process all folders
     compare_folders_at_time(base_directory, specific_times, var_names)
 ```
 
@@ -68,10 +72,11 @@ For comparing the dendrite lengths
         calculate_max_x_coordinate(base_directory, folder_names)
         plot_points_vs_time_with_max_w(base_directory, folder_names)
 ```
-    Change the following line to define which part of older name to be appeared in the plot legend 
-    ```python 
+    
+```python 
+     # Change the following line to define which part of older name to be appeared in the plot legend 
      aniso_value = folder_name.split('aniso')[-1].strip()  #interface/i/aniso
-    ```
+```
 
 ## Authors
 This Software is developed by Musanna Galib
@@ -85,7 +90,7 @@ If you use this software in your research, please cite the following paper:
 BibTeX entry:
 @article{YourPaper,
   title={Dendrite Inhibition using Heteroepitaxial Residual Stress in Zn Metal Batteries},
-  author={Musanna Galib, Jian Liu, and Mauricio Ponga},
+  author={Musanna Galib, Amardeep Amardeep, Jian Liu, and Mauricio Ponga},
   journal={ACS Energy Lett},
   year={2024},
   publisher={American Chemical Society}
@@ -98,6 +103,4 @@ If you have questions, please don't hesitate to reach out to galibubc[at]student
 If you find a bug or have a proposal for a feature, please post it in the Issues. If you have a question, topic, or issue that isn't obviously one of those, try our GitHub Disucssions.
 
 If your post is related to the framework/package, please post in the issues/discussion on that repository. 
-
-
 

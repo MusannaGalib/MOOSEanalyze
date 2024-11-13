@@ -1,31 +1,11 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
 build-backend = "setuptools.build_meta"
 
-[project]
-name = "MOOSEanalyze"
-version = "1.0"
-description = "A Python package for post-processing MOOSE data"
-keywords = ["MOOSE", "post-processing", "Pvpython", "paraview"]
 
-authors = [
-    { name = "Musanna Galib", email = "galibubc@student.ubc.ca" }
-]
 
-dependencies = [
-    "pandas>=1.1.5",
-    "matplotlib>=3.3.3",
-    "numpy>=1.19.4",
-    "seaborn>=0.13.2"
-]
-
-[project.optional-dependencies]
-extras = ["vtk", "paraview"]
-
-[project.urls]
-homepage = "https://github.com/MusannaGalib/MOOSEanalyze"
-documentation = "https://github.com/MusannaGalib/MOOSEanalyze/blob/main/README.md"
-repository = "https://github.com/MusannaGalib/MOOSEanalyze"
-
-# Mark certain fields as dynamic
-dynamic = ["readme", "license", "requires-python", "scripts"]
+#python3 -m build
+#python3 -m pip install --upgrade twine
