@@ -6,24 +6,26 @@ build-backend = "setuptools.build_meta"
 name = "MOOSEanalyze"
 version = "1.0"
 description = "A Python package for post-processing MOOSE data"
-long_description = "file: README.md"
-long_description_content_type = "text/markdown"
 keywords = ["MOOSE", "post-processing", "Pvpython", "paraview"]
 
-# URLs related to the project
+authors = [
+    { name = "Musanna Galib", email = "galibubc@student.ubc.ca" }
+]
+
+dependencies = [
+    "pandas>=1.1.5",
+    "matplotlib>=3.3.3",
+    "numpy>=1.19.4",
+    "seaborn>=0.13.2"
+]
+
+[project.optional-dependencies]
+extras = ["vtk", "paraview"]
+
+[project.urls]
 homepage = "https://github.com/MusannaGalib/MOOSEanalyze"
 documentation = "https://github.com/MusannaGalib/MOOSEanalyze/blob/main/README.md"
 repository = "https://github.com/MusannaGalib/MOOSEanalyze"
 
-[project.authors]
-name = "Musanna Galib"
-email = "galibubc@student.ubc.ca"
-
-[project.dependencies]
-pandas = ">=1.1.5"
-matplotlib = ">=3.3.3"
-numpy = ">=1.19.4"
-seaborn = ">=0.13.2"
-
-[project.optional-dependencies]
-extras = ["vtk", "paraview"]
+# Mark certain fields as dynamic
+dynamic = ["readme", "license", "requires-python", "scripts"]
