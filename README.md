@@ -1,4 +1,4 @@
-![PyPI downloads](https://img.shields.io/pypi/dm/your-package-name)
+[![PyPI downloads](https://img.shields.io/pypi/dm/your-package-name)](https://test.pypi.org/project/MOOSEanalyze/)
 [![Paper](https://img.shields.io/badge/ACS_Energy_Lett-blue)](https://doi.org/your-paper-doi)
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-red.svg)](https://www.python.org/downloads/)
 [![Release](https://img.shields.io/badge/release-v0.0.1-brightgreen)](https://github.com/MusannaGalib/MOOSEanalyze)
