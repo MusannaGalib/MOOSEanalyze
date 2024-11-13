@@ -12,7 +12,7 @@ keywords = ["MOOSE", "post-processing", "Pvpython", "paraview"]
 
 # URLs related to the project
 homepage = "https://github.com/MusannaGalib/MOOSEanalyze"
-documentation = "https://github.com/MusannaGalib/MOOSEanalyze/docs"
+documentation = "https://github.com/MusannaGalib/MOOSEanalyze/blob/main/README.md"
 repository = "https://github.com/MusannaGalib/MOOSEanalyze"
 
 [project.authors]
