@@ -75,7 +75,7 @@ BibTeX entry:
   title={Dendrite Inhibition using Heteroepitaxial Residual Stress in Zn Metal Batteries},
   author={Musanna Galib, Amardeep Amardeep, Jian Liu, and Mauricio Ponga},
   journal={ACS Energy Lett},
-  year={2024},
+  year={2025},
   publisher={American Chemical Society}
 }
 ```
