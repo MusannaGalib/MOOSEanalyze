@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import matplotlib.gridspec as gridspec
+from matplotlib import rcParams
 from scipy.interpolate import interp1d
 from scipy.interpolate import griddata
 import numpy as np
@@ -1234,6 +1235,9 @@ def plot_points_vs_time(base_directory, folder_names=None, order=5):
 
 
 def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
+    # Set Times New Roman as the global font
+    rcParams['font.family'] = 'Times New Roman'
+
     if folder_names is None:
         folder_names = []
     
@@ -1305,7 +1309,7 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
         # Plot Points:0 vs Time with fitted line
         plt.figure(figsize=(4, 3.5))
         for folder_name, group_df in combined_df_fit.groupby('Folder'):
-            aniso_value = folder_name.split('aniso')[-1].strip()  #interface/i/aniso
+            aniso_value = folder_name.split('interface')[-1].strip()  #interface/i/aniso
 
             if 'Bare Zn' in folder_name:
                 linestyle = '-'
@@ -1322,13 +1326,13 @@ def plot_points_vs_time_with_max_w(base_directory, folder_names=None, order=5):
             
             plt.plot(x, y_fit, linestyle=linestyle, label=f'{label_prefix} {aniso_value}', linewidth=1)
 
-        plt.xlabel('Time', fontsize=16)
-        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=16)
+        plt.xlabel('Time', fontsize=18)
+        plt.ylabel('Dendrite Length ($\mu m$)', fontsize=18)
         plt.xticks(fontsize=14)
         plt.yticks(fontsize=14)
         plt.grid(False)
         # Create legend once with proper font size and no border
-        plt.legend(fontsize=11, frameon=False)
+        plt.legend(fontsize=14, frameon=False)
         plt.tight_layout()
                 
 
