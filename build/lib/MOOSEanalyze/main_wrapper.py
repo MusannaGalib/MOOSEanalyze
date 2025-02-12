@@ -17,20 +17,21 @@ from vtk.util.numpy_support import vtk_to_numpy
 
 
 
-#sys.path.append('D:\\Backup_31_July_2022\\Research\\Research\\pyMOOSE')
+#sys.path.append('D:\\Backup_31_July_2022\\Research\\Research\\MOOSEanalyze')
 
 #$Env:PATH += ";D:\Backup_31_July_2022\Research\Research\MOOSE\ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64\ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64\bin"
 
+#D:\Backup_31_July_2022\Research\Research\MOOSE\ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64\ParaView-5.11.0-RC1-Windows-Python3.9-msvc2017-AMD64\bin> ./pvpython D:/Backup_31_July_2022/Research/Research/MOOSEanalyze/MOOSEanalyze/main_wrapper.py
 
-# Assuming main_wrapper.py is in the pyMOOSE\pyMOOSE directory
-# and you want to import modules from pyMOOSE (one level up)
+# Assuming main_wrapper.py is in the MOOSEanalyze\MOOSEanalyze directory
+# and you want to import modules from MOOSEanalyze (one level up)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 # Now try to import your modules
 try:
-    from pyMOOSE import (find_and_process_files,
+    from MOOSEanalyze import (find_and_process_files,
                          plot_variables_across_timesteps,
                          plot_variables_over_line_combined,
                          plot_variables_over_line_each_timestep_separately,
@@ -98,10 +99,12 @@ def main():
 
 
     #folder_names = ['Bare Zn i 1.5','Bare Zn i 2.8','Bare Zn i 5.0','MLD Alucone eigen 0.5 i 1.5','MLD Alucone eigen 0.5 i 2.8','MLD Alucone eigen 0.5 i 5']
-    #folder_names = ['Bare Zn nostress interface','MLD Alucone eigen0.5bulk0.03GPa interface 1.1GPa','MLD Alucone eigen0.5bulk0.01GPa interface 1.2GPa','MLD Alucone eigen0.5bulk0.005GPa interface 1.3GPa']
+    folder_names = ['Bare Zn nostress interface','MLD Alucone eigen0.5bulk0.03GPa interface 1.1GPa','MLD Alucone eigen0.5bulk0.01GPa interface 1.2GPa','MLD Alucone eigen0.5bulk0.005GPa interface 1.3GPa']
 
-    folder_names = [ 'Bare Zn aniso 0.00', 'Bare Zn aniso 0.04', 'Bare Zn aniso 0.2', 'Bare Zn aniso 0.4', 'MLD eigen 0.5 aniso 0.00', 'MLD eigen 0.5 aniso 0.2',
-                     'MLD eigen 0.5 aniso 0.04', 'MLD eigen 0.5 aniso 0.4']
+    #folder_names = [ 'Bare Zn aniso 0.04', 'Bare Zn aniso 0.2', 'Bare Zn aniso 0.4', 'MLD eigen 0.5 aniso 0.2',
+    #                 'MLD eigen 0.5 aniso 0.04', 'MLD eigen 0.5 aniso 0.4']
+    #folder_names = [ 'Bare Zn aniso 0.00', 'Bare Zn aniso 0.04', 'Bare Zn aniso 0.2', 'Bare Zn aniso 0.4', 'MLD eigen 0.5 aniso 0.00', 'MLD eigen 0.5 aniso 0.2',
+    #                 'MLD eigen 0.5 aniso 0.04', 'MLD eigen 0.5 aniso 0.4']
     
 
     #folder_names = ['Bare_Zn_anisotropy_0.000', 'Bare_Zn', 'Bare_Zn_anisotropy_0.2',  'Bare_Zn_anisotropy_0.4_1', 'MLD_Alucone_eigen_0.5_anisotropy_0.000', 'MLD_Alucone_eigen_0.5_1','MLD_Alucone_eigen_0.5_anisotropy_0.2','MLD_Alucone_eigen_0.5_anisotropy_0.4_1']
@@ -125,6 +128,9 @@ def main():
     #compare_folders_at_time(base_directory, specific_times, var_names)    
 
     print("All operations completed successfully.")
+
+
+
 
 if __name__ == "__main__":
     main()
