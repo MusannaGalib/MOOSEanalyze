@@ -1,8 +1,8 @@
 [![PyPI downloads](https://img.shields.io/pypi/dm/MOOSEanalyze)](https://pypi.org/project/MOOSEanalyze/) 
-<!-- [![Paper](https://img.shields.io/badge/ACS_Energy_Lett-blue)](https://doi.org/your-paper-doi) -->
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-red.svg)](https://www.python.org/downloads/)
 [![Release](https://img.shields.io/badge/release-v0.0.1-brightgreen)](https://github.com/MusannaGalib/MOOSEanalyze)
 [![License: MIT](https://img.shields.io/badge/license-MIT_2.0-yellow)](https://opensource.org/licenses/MIT)
+<!-- [![Paper](https://img.shields.io/badge/ACS_Energy_Lett-blue)](https://doi.org/your-paper-doi) -->
 
 # MOOSEanalyze
 MOOSEanalyze is a Python package designed to facilitate advanced analysis and visualization of post-processing of MOOSE simulation's exodus file format. MOOSEanalyze python packageis built on Paraview's PvPython module.
@@ -50,12 +50,12 @@ For comparing between different folders automatically
     compare_folders_at_time(base_directory, specific_times, var_names)
 ```
 
-For comparing the dendrite lengths
+For comparing the dendrite lengths:
 ```python 
         calculate_max_x_coordinate(base_directory, folder_names)
         plot_points_vs_time_with_max_w(base_directory, folder_names)
 ```
-    
+Go to MOOSE_post_processsing_paraview.py and change the following  ```interface/i/aniso```, based on interface stress, current density or anisotropy cases, respectively
 ```python 
      # Change the following line to define which part of older name to be appeared in the plot legend 
      aniso_value = folder_name.split('aniso')[-1].strip()  #interface/i/aniso
