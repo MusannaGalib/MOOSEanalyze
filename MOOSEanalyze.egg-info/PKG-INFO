@@ -5,6 +5,7 @@ Summary: A Python package for post-processing MOOSE data
 Home-page: https://github.com/MusannaGalib/MOOSEanalyze/
 Author: Musanna Galib
 Author-email: galibubc@student.ubc.ca
+License: MIT
 Keywords: MOOSE,Post-processing,Pvpython-paraview
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
@@ -19,6 +20,7 @@ Dynamic: description
 Dynamic: description-content-type
 Dynamic: home-page
 Dynamic: keywords
+Dynamic: license
 Dynamic: requires-dist
 Dynamic: requires-python
 Dynamic: summary
