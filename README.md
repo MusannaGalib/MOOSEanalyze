@@ -71,15 +71,16 @@ If you use this software in your research, please cite the following paper:
 
 
 ```python
-@misc{galib2025dendritesuppressionznbatteries,
-      title={Dendrite Suppression in Zn Batteries Through Hetero-Epitaxial Residual Stresses Shield}, 
-      author={Musanna Galib and Amardeep Amardeep and Jian Liu and Mauricio Ponga},
-      year={2025},
-      eprint={2502.03841},
-      archivePrefix={arXiv},
-      primaryClass={cond-mat.mtrl-sci},
-      url={https://arxiv.org/abs/2502.03841}, 
+@article{doi:10.1021/acsami.5c06192,
+author = {Galib, Musanna and Xu, Jia and Amardeep, Amardeep and Liu, Jian and Ponga, Mauricio},
+title = {Dendrite Suppression in Zn Batteries through a Heteroepitaxial Residual Stress Shield},
+journal = {ACS Applied Materials \& Interfaces},
+doi = {10.1021/acsami.5c06192},
+    note ={PMID: 40634255},
+URL = { https://doi.org/10.1021/acsami.5c06192}
+
 }
+
 ```
 
 ### Contact, questions, and contributing
