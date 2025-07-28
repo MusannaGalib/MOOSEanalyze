@@ -1,4 +1,4 @@
-[![arXiv](https://img.shields.io/badge/arXiv-2502.03841-blue)](https://arxiv.org/abs/2502.03841)
+[![arXiv](https://img.shields.io/badge/10.1021/acsami.5c06192-blue)](https://doi.org/10.1021/acsami.5c06192)
 [![PyPI downloads](https://img.shields.io/pypi/dm/MOOSEanalyze)](https://pypi.org/project/MOOSEanalyze/) 
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-red.svg)](https://www.python.org/downloads/)
 [![Release](https://img.shields.io/badge/release-v0.0.1-brightgreen)](https://github.com/MusannaGalib/MOOSEanalyze)
