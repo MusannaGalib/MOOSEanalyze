@@ -77,9 +77,7 @@ title = {Dendrite Suppression in Zn Batteries through a Heteroepitaxial Residual
 journal = {ACS Applied Materials \& Interfaces},
 doi = {10.1021/acsami.5c06192},
     note ={PMID: 40634255},
-URL = { https://doi.org/10.1021/acsami.5c06192}
-
-}
+URL = { https://doi.org/10.1021/acsami.5c06192}}
 
 ```
 
